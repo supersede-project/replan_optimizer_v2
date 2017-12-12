@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.2.2" icons="true" generate-combined-fragments="true">  
+  <object id="1" language="java" name="logic.SolverNRP" project="optimizer" 
+    file="/optimizer/src/main/java/logic/SolverNRP.java" binary="false" label="solverNRP" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="131" y="0"/>    
+    <execution id="2">      
+      <position height="636" width="0" x="0" y="107"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="579" width="0" x="0" y="145"/>    
+    </execution>    
+    <execution id="10">      
+      <position height="227" width="0" x="0" y="357"/>    
+    </execution>    
+    <execution id="12">      
+      <position height="19" width="0" x="0" y="627"/>    
+    </execution>    
+    <execution id="14">      
+      <position height="19" width="0" x="0" y="686"/>    
+    </execution>    
+    <execution id="16">      
+      <position height="19" width="0" x="0" y="404"/>    
+    </execution>  
+  </object>  
+  <object id="25" language="java" name="org.uma.jmetal.util.AlgorithmRunner.Executor" project="optimizer" 
+    file="/home/jmotger/.gradle/caches/modules-2/files-2.1/org.uma.jmetal/jmetal-core/5.0/f8a81ffcff7e37d5e6be5c4648501771ff338fa6/jmetal-core-5.0.jar" 
+    binary="true" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="18">      
+      <position height="19" width="0" x="0" y="432"/>    
+    </execution>    
+    <execution id="20">      
+      <position height="19" width="0" x="0" y="470"/>    
+    </execution>  
+  </object>  
+  <object id="26" language="java" name="org.uma.jmetal.algorithm.Algorithm" project="optimizer" 
+    file="/home/jmotger/.gradle/caches/modules-2/files-2.1/org.uma.jmetal/jmetal-core/5.0/f8a81ffcff7e37d5e6be5c4648501771ff338fa6/jmetal-core-5.0.jar" 
+    binary="true" label="algorithm" type="interface" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="22">      
+      <position height="19" width="0" x="0" y="508"/>    
+    </execution>  
+  </object>  
+  <object id="27" language="java" name="logic.PopulationFilter" project="optimizer" 
+    file="/optimizer/src/main/java/logic/PopulationFilter.java" binary="false" label="&lt;static&gt;" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="24">      
+      <position height="19" width="0" x="0" y="546"/>    
+    </execution>  
+  </object>  
+  <object id="28" language="java" name="logic.NextReleaseProblem" project="optimizer" 
+    file="/optimizer/src/main/java/logic/NextReleaseProblem.java" binary="false" label="problem" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="6">      
+      <position height="19" width="0" x="0" y="200"/>    
+    </execution>    
+    <execution id="8">      
+      <position height="19" width="0" x="0" y="278"/>    
+    </execution>  
+  </object>  
+  <object id="29" language="java" name="logic.PlanningSolution" project="optimizer" 
+    file="/optimizer/src/main/java/logic/PlanningSolution.java" binary="false" label="solution" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>  
+  </object>  
+  <combined-fragment id="30" interaction-operator="ALT">    
+    <interaction-operand id="31" constraint="problem.getAlgorithmParameters() == null">      
+      <fragment refId="5"/>    
+    </interaction-operand>    
+    <interaction-operand id="32" constraint="else">      
+      <fragment refId="7"/>    
+    </interaction-operand>  
+  </combined-fragment>  
+  <note id="33">    
+    <position height="68" width="141" x="532" y="154"/>    
+    <text><![CDATA[If NRP instance does not have Algorithm Parameters, create and set a new instance]]>
+    </text>  
+  </note>  
+  <note id="34">    
+    <position height="69" width="141" x="532" y="232"/>    
+    <text><![CDATA[Else get the AlgorithmParameters instance from the NRP instance]]>
+    </text>  
+  </note>  
+  <note id="35">    
+    <position height="73" width="182" x="288" y="445"/>    
+    <text><![CDATA[Generate the Executor jMetal class to execute a created algorithm execution and get the Result instance]]>
+    </text>  
+  </note>  
+  <note id="36">    
+    <position height="66" width="151" x="291" y="576"/>    
+    <text><![CDATA[A postprocess method is applied to scheduled remaining features if there is enough time]]>
+    </text>  
+  </note>  
+  <message id="3" operation="executeNRP(logic.NextReleaseProblem):logic.PlanningSolution" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="5" operation="setAlgorithmParameters(entities.parameters.AlgorithmParameters):void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </message>  
+  <message id="7" operation="getAlgorithmParameters():entities.parameters.AlgorithmParameters" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>  
+  <message id="9" operation="generatePlanningSolution(logic.NextReleaseProblem):logic.PlanningSolution" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="11" operation="postprocess(logic.PlanningSolution):void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="12"/>  
+  </message>  
+  <message id="13" operation="clearSolutionIfNotValid(logic.PlanningSolution):void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="14"/>  
+  </message>  
+  <message id="15" 
+    operation="createAlgorithm(logic.SolverNRP.AlgorithmType,logic.NextReleaseProblem):org.uma.jmetal.algorithm.Algorithm&lt;List&lt;PlanningSolution&gt;&gt;" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="16"/>  
+  </message>  
+  <message id="17" operation="Executor(org.uma.jmetal.algorithm.Algorithm&lt;?&gt;)" asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="18"/>  
+  </message>  
+  <message id="19" operation="execute():org.uma.jmetal.util.AlgorithmRunner" asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="20"/>  
+  </message>  
+  <message id="21" operation="getResult():Result" asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="22"/>  
+  </message>  
+  <message id="23" 
+    operation="getBestSolutions(java.util.List&lt;logic.PlanningSolution&gt;):java.util.Set&lt;PlanningSolution&gt;" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="24"/>  
+  </message>
+</sequence-diagram>

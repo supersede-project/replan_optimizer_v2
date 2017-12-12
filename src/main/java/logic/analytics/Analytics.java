@@ -63,6 +63,10 @@ public class Analytics {
         evaluateFeatures();
         evaluateQuality();
     }
+    
+    public List<String> getInfo() {
+    	return info;
+    }
 
     private void initializeInfo() {
         for (Feature f : features)

@@ -56,7 +56,6 @@ public class Schedule implements Iterable<WeekSchedule> {
     public boolean scheduleFeature(PlannedFeature pf, boolean adjustHours) {
 
         double featureHoursLeft = pf.getFeature().getDuration();
-
         // Not enough hours left for this feature in the iteration
         if (totalHoursLeft < featureHoursLeft)
             return false;

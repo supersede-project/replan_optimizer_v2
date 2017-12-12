@@ -17,14 +17,21 @@ import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.pesa2.PESA2Builder;
 import org.uma.jmetal.algorithm.multiobjective.smsemoa.SMSEMOABuilder;
 import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
+import org.uma.jmetal.measure.MeasureManager;
+import org.uma.jmetal.measure.PullMeasure;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.util.AlgorithmRunner;
+import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.neighborhood.impl.C9;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -104,7 +111,7 @@ public class SolverNRP {
             case NSGAII:
                 return new NSGAIIBuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxIterations(nbIterations)
+                        .setMaxEvaluations(nbIterations)
                         .setPopulationSize(populationSize)
                         .build();
             case MOCell:
@@ -151,15 +158,20 @@ public class SolverNRP {
         else
             algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
 
-        PlanningSolution solution = this.generatePlanningSolution(problem);
-
+        //PlanningSolution solution = this.generatePlanningSolution(problem);
+        PlanningSolution solution = this.generatePlanningSolutionWithMeasures(problem);
+        
         solution.setAnalytics(new Analytics(solution));
 
         postprocess(solution);
 
         clearSolutionIfNotValid(solution);
 
-        System.out.println(String.format("%d/%d after postprocessing)",
+        //FIXME added re-evaluation
+        SolutionQuality solutionQuality = new SolutionQuality();
+        problem.evaluate(solution);
+        
+        System.out.println(String.format("%f, %d/%d after postprocessing)", solutionQuality.getAttribute(solution), 
                 solution.getPlannedFeatures().size(), problem.getFeatures().size()));
 
         return solution;
@@ -206,6 +218,8 @@ public class SolverNRP {
                     // Don't forget to update the solution's internal state
                     solution.getPlannedFeatures().add(pf);
                     solution.getUndoneFeatures().remove(f);
+                    //FIXME updated end date when reprocessing
+                    solution.setEndDate(Math.max(pf.getEndHour(), solution.getEndDate()));
                 }
             }
         }
@@ -228,6 +242,7 @@ public class SolverNRP {
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 
         algorithm = createAlgorithm(algorithmType, problem);
+        
         new AlgorithmRunner.Executor(algorithm).execute();
 
         List<PlanningSolution> result = algorithm.getResult();
@@ -236,6 +251,71 @@ public class SolverNRP {
         printQuality(result, bestSolution);
 
         return bestSolution;
+    }
+    
+    private static final int POPULATION_MEASURE = 0;
+	private static final int MEASURE = 1;
+    
+    private PlanningSolution generatePlanningSolutionWithMeasures(NextReleaseProblem problem) {
+    	
+    	//FIXME Repeated code
+    	
+    	CrossoverOperator<PlanningSolution> crossover;
+        MutationOperator<PlanningSolution> mutation;
+        SelectionOperator<List<PlanningSolution>, PlanningSolution> selection;
+        SequentialSolutionListEvaluator<PlanningSolution> evaluator;
+
+
+        crossover = new PlanningCrossoverOperator(problem);
+        mutation = new PlanningMutationOperator(problem);
+        selection = new BinaryTournamentSelection<>(new PlanningSolutionDominanceComparator());
+        evaluator = new SequentialSolutionListEvaluator<>();
+
+        AlgorithmParameters parameters = problem.getAlgorithmParameters();
+        int nbIterations = parameters.getNumberOfIterations();
+        int populationSize = parameters.getPopulationSize();
+    	
+    	CustomAlgorithm algorithm = new CustomAlgorithm(problem, nbIterations, populationSize, crossover, mutation, selection, evaluator);
+    	PullMeasure<List<PlanningSolution>> populationMeasure = algorithm.getMeasureManager().getPullMeasure(POPULATION_MEASURE);
+    	PullMeasure<Integer> iterationMeasure = algorithm.getMeasureManager().getPullMeasure(MEASURE);
+    	
+    	Thread thread = new Thread(algorithm);
+    	thread.start();
+    	
+    	SolutionQuality quality = new SolutionQuality();
+    	StringBuilder sb = new StringBuilder();
+    	int lastIt = -1;
+    	while (thread.isAlive()) {
+    		List<PlanningSolution> newPopulation = populationMeasure.get();
+    		int currentIt = iterationMeasure.get();
+    		if (newPopulation != null && currentIt != lastIt) {
+    			lastIt = currentIt;
+    			try {
+    				PlanningSolution ps = PopulationFilter.getBestSolution(newPopulation);
+        			if (ps != null && quality.getAttribute(ps) != null) {
+            			sb.append("Current population " + newPopulation.size() + " (iteration " + iterationMeasure.get() + "):\n");
+        				sb.append("Best solution " + ps.getPlannedFeatures().size() + " features with " + quality.getAttribute(ps) + "\n");
+        			}
+    			} catch (Exception e) {
+    				
+    			}
+    		}
+    	}
+    	try {
+			PrintWriter out = new PrintWriter("/home/jmotger/Escritorio/experiments/data.txt");
+			out.println(sb.toString());
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}    	
+    	
+    	List<PlanningSolution> result = algorithm.getResult();
+        PlanningSolution bestSolution = PopulationFilter.getBestSolutions(result).iterator().next();
+
+        printQuality(result, bestSolution);
+
+        return bestSolution;
+        
     }
 
     private void printQuality(List<PlanningSolution> solutions, PlanningSolution best) {

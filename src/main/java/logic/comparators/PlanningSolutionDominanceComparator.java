@@ -1,6 +1,7 @@
 package logic.comparators;
 
 import logic.PlanningSolution;
+import logic.SolutionEvaluator;
 import logic.SolutionQuality;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.comparator.ConstraintViolationComparator;

@@ -7,6 +7,9 @@ import entities.*;
 import entities.parameters.AlgorithmParameters;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -34,6 +37,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
     private static final int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
 	private static final int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
 	private static final int INDEX_DISTRIBUTION_OBJECTIVE = 2;	// Make sure to
+	
+	private static final Logger logger = LoggerFactory.getLogger(NextReleaseProblem.class);
 
 	// PROBLEM
 	private List<Feature> features;
@@ -105,7 +110,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	// Constructor (normal)
 	public NextReleaseProblem(List<Feature> features, List<Employee> employees, int nbWeeks, double nbHoursPerWeek) {
 		this();
-
+		
 		this.employees = employees;
 		this.nbWeeks = nbWeeks;
 		this.nbHoursByWeek = nbHoursPerWeek;
@@ -116,11 +121,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			if (getSkilledEmployees(feature.getRequiredSkills()).size() > 0) // 1.
 				if (features.containsAll(feature.getPreviousFeatures())) // 2.
 					this.features.add(feature);
-
+		
 		worstEndDate = nbWeeks * nbHoursByWeek;
 
 		initializeWorstScore();
 		initializeNumberOfConstraint();
+	}
+	
+	public void setTag(String name) {
+		setName(name);
 	}
 
 	// Constructor (with previous plan)
@@ -171,14 +180,13 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	@Override
 	public void evaluate(PlanningSolution solution) {
-		Map<Employee, Schedule> planning = new HashMap<>();
+		Map<Employee, Schedule> planning = new HashMap<Employee, Schedule>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
 
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
             computeHours(solution, currentPlannedFeature);
-
 			Employee employee = currentPlannedFeature.getEmployee();
 			Schedule employeeSchedule = planning.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
 
@@ -197,7 +205,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.setEmployeesPlanning(planning);
 		solution.setEndDate(endHour);
 
-
 		/* Objectives and quality evaluation */
 		SolutionEvaluator evaluator = SolutionEvaluator.getInstance();
 
@@ -205,7 +212,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         solution.setObjective(INDEX_END_DATE_OBJECTIVE, evaluator.endDateObjective(solution));
         //solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
 
-		solutionQuality.setAttribute(solution, evaluator.quality(solution));
+		solutionQuality.setAttribute(solution, evaluator.newQuality(solution));
 	}
 
 	private void computeHours(PlanningSolution solution) {
@@ -260,6 +267,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		if (solution.getEndDate() > nbWeeks * nbHoursByWeek) {
 			violatedConstraints++;
 			overall -= 1.0;
+			
 		}
 
 		// Check if the employees assigned to the planned features have the required skills
@@ -308,5 +316,16 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		overallConstraintViolation.setAttribute(solution, overall);
 		if (violatedConstraints > 0)
 			solutionQuality.setAttribute(solution, 0.0);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Next Release Problem to plan in " + nbWeeks + " weeks with " + nbHoursByWeek + "h per week\n");
+		sb.append("List of features:\n");
+		for (Feature f : features) sb.append("\t" + f.toString() + "\n");
+		sb.append("List of employees:\n");
+		for (Employee e: employees) sb.append("\t" + e.toString() + "\n");
+		return sb.toString();
 	}
 }
