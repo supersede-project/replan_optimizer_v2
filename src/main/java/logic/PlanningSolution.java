@@ -74,7 +74,6 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
     public Analytics getAnalytics() { return analytics; }
     public void setAnalytics(Analytics analytics) { this.analytics = analytics; }
 
-
 	/* --- CONSTRUCTORS --- */
 
     // constructor (normal)
@@ -195,9 +194,30 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
             else
                 initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
         }
+		
 	}
 
-    // Initializes the planned features randomly
+    public double computeCriticalPath() {
+    	double currentCriticalPath = 0.;
+		for (PlannedFeature pf : getPlannedFeatures()) {
+			double newPath = getPathDuration(pf.getFeature());
+			if (newPath > currentCriticalPath) currentCriticalPath = newPath;
+		}
+		return currentCriticalPath;
+	}
+	private double getPathDuration(Feature feature) {
+		if (feature.getPreviousFeatures().isEmpty())
+			return feature.getDuration();
+		else {
+			double maxPath = 0.;
+			for (Feature f : feature.getPreviousFeatures()) {
+				double path = getPathDuration(f);
+				if (path > maxPath) maxPath = path;
+			}
+			return maxPath + feature.getDuration();
+		}
+	}
+	// Initializes the planned features randomly
     private void initializePlannedFeaturesRandomly(int numFeaturesToPlan) {
         Feature featureToDo;
         List<Employee> skilledEmployees;

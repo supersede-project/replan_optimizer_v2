@@ -21,16 +21,17 @@ public class SolutionEvaluator {
 
     /* --- OBJECTIVES --- */
     public double priorityObjective(PlanningSolution solution) {
-        return solution.getPriorityScore();
+        return solution.getPriorityScore() / worstScore(solution.getProblem());
     }
 
     public double endDateObjective(PlanningSolution solution) {
         NextReleaseProblem problem = solution.getProblem();
         double worstEndDate = problem.getNbWeeks() * problem.getNbHoursByWeek();
 
-        return solution.getPlannedFeatures().isEmpty() ? worstEndDate : solution.getEndDate();
+        //return solution.getPlannedFeatures().isEmpty() ? worstEndDate : solution.getEndDate();
+        return (solution.getEndDate() - solution.computeCriticalPath()) / (worstEndDate - solution.computeCriticalPath());
     }
-
+    
     public double distributionObjective(PlanningSolution solution) {
         Map<Employee, Double> hoursPerEmployee = new HashMap<>();
         double totalHours = 0.0;
@@ -84,7 +85,7 @@ public class SolutionEvaluator {
         return (endDateQuality*0.3 + priorityQuality*0.4 + distributionQuality*0.3);
     }
     
-    private final static int COMPLETION_SCALE = 2;
+    private int COMPLETION_SCALE;
     
     /* --- NEW QUALITY --- */
     public double newQuality(PlanningSolution solution) {
@@ -95,15 +96,19 @@ public class SolutionEvaluator {
         double totalFeatures = problem.getFeatures().size();
         double penalty = worstEndDate/totalFeatures;
                 
-        double endDateQuality = totalFeatures > 0 ?
-        		Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate) : 0;
-        double priorityQuality = worstScore(problem) > 0 ? 
-        		1.0 - priorityObjective(solution) / worstScore(problem) : 0;
+        //FIXME This is wrong; this doesn't check the endDate quality, but completion quality
+        //double endDateQuality = 
+        //		Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
+        
+        double endDateQuality = 1.0 - endDateObjective(solution);
+                
+        double priorityQuality = 1.0 - priorityObjective(solution);
+        		
         double distributionQuality = 1.0 - distributionObjective(solution);
         
         double completionScore = computeCompletionScore(totalFeatures, unplannedFeatures);
-        
-        double qualityScore = (endDateQuality*0.3 + priorityQuality*0.4 + distributionQuality*0.3) / 
+                
+        double qualityScore = (endDateQuality*0.4 + priorityQuality*0.4 + distributionQuality*0.2) / 
         		(double) Math.pow(10, COMPLETION_SCALE);
         
         double quality = completionScore + qualityScore;
@@ -114,6 +119,7 @@ public class SolutionEvaluator {
 
 
     private double computeCompletionScore(double totalFeatures, double unplannedFeatures) {
+    	COMPLETION_SCALE = 0;
     	double aux = 0.9;
         double max = 0;
         int nbFeatures = (int) totalFeatures;
@@ -121,6 +127,7 @@ public class SolutionEvaluator {
         	max += aux;
         	aux /= 10;
         	nbFeatures /= 10;
+        	++COMPLETION_SCALE;
         }
         return max * (totalFeatures - unplannedFeatures) / totalFeatures;
 	}

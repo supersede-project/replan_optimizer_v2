@@ -60,11 +60,11 @@ public class ParameterizedNRPTest {
 		System.out.println(nrp.toString());
 		
 		SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
-		for (int i = 0; i < 100; ++i) {
+		//for (int i = 0; i < 100; ++i) {
 			PlanningSolution solution = solver.executeNRP(nrp);
-			//System.out.println("***BEST SOLUTION FOUND***");
-			//System.out.println(solution.toString());
-		}
+			System.out.println("***BEST SOLUTION FOUND***");
+			System.out.println(solution.toString());
+		//}
 		
 	}
 	
