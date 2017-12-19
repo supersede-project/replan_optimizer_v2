@@ -102,7 +102,10 @@ public class SolutionEvaluator {
         
         double priorityScore = priorityScore(solution);
                         
-        double qualityScore = (endDateQuality*0.4 + completionQuality*0.4 + distributionQuality*0.2) / 
+        double qualityScore = (
+        		endDateQuality*0.5 + 
+//        		completionQuality*0.0 + 
+        		distributionQuality*0.5) / 
         		(double) Math.pow(10, COMPLETION_SCALE);
         
         double quality = priorityScore + qualityScore;

@@ -34,17 +34,17 @@ public class ParameterizedNRPTest {
 	
 	@Before
 	public void before() {
-		nbFeatures = 30;
+		nbFeatures = 20;
 		nbSkills = 3;
-		nbEmployees = 5;
+		nbEmployees = 4;
 		
-		nbWeeks = 10;
+		nbWeeks = 3;
 		nbHoursPerWeek = 40.0;
 		
 		dependencyRate = 0.30;
-		availabilityRates = new double[]{0.5,0.5,0.8,1.0,1.0};
-		skillEmployeeRates = new double[]{0.3,0.4,0.8};
-		skillFeatureRates = new double[]{0.2,0.4,0.6};
+		availabilityRates = new double[]{0.5,0.8,1.0,1.0};
+		skillEmployeeRates = new double[]{0.2,0.5,0.8};
+		skillFeatureRates = new double[]{0.2,0.5,0.8};
 		
 	}
 
