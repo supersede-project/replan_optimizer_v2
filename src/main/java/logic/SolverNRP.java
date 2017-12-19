@@ -163,7 +163,7 @@ public class SolverNRP {
         
         solution.setAnalytics(new Analytics(solution));
 
-        postprocess(solution);
+        /*postprocess(solution);
 
         clearSolutionIfNotValid(solution);
 
@@ -172,12 +172,13 @@ public class SolverNRP {
         problem.evaluate(solution);
         
         System.out.println(String.format("%f, %d/%d after postprocessing)", solutionQuality.getAttribute(solution), 
-                solution.getPlannedFeatures().size(), problem.getFeatures().size()));
+                solution.getPlannedFeatures().size(), problem.getFeatures().size()));*/
 
         return solution;
     }
 
     // Tries to schedule undone features to the least busy employee if there is enough time
+    @Deprecated
     private void postprocess(PlanningSolution solution) {
         Utils utils = new Utils(solution);
         NextReleaseProblem problem = solution.getProblem();
@@ -213,7 +214,7 @@ public class SolverNRP {
                     utils.computeHours(pf);
                     Schedule s = solution.getEmployeesPlanning().get(e);
 
-                    s.forceSchedule(pf);
+                    s.scheduleFeature(pf);
 
                     // Don't forget to update the solution's internal state
                     solution.getPlannedFeatures().add(pf);
@@ -318,7 +319,7 @@ public class SolverNRP {
         
     }
 
-    private void printQuality(List<PlanningSolution> solutions, PlanningSolution best) {
+	private void printQuality(List<PlanningSolution> solutions, PlanningSolution best) {
         SolutionQuality solutionQuality = new SolutionQuality();
         double totalQuality = 0.0;
         int totalPlannedFeatures = 0;
@@ -332,7 +333,7 @@ public class SolverNRP {
 
         int nbFeatures = solutions.get(0).getProblem().getFeatures().size();
 
-        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %f, %d/%d, ";
+        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %f, %d/%d)\n";
         System.out.print(
                 String.format(Locale.ENGLISH, message,
                         averageQuality, averagePlannedFeatures, nbFeatures,

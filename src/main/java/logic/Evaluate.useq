@@ -121,18 +121,18 @@
   </object>  
   <combined-fragment id="61" interaction-operator="LOOP">    
     <interaction-operand id="62" constraint="for: plannedFeatures">      
-      <fragment refId="63"/>      
-      <fragment refId="21"/>      
-      <fragment refId="41"/>      
-      <fragment refId="11"/>      
-      <fragment refId="15"/>      
-      <fragment refId="47"/>      
       <fragment refId="17"/>      
-      <fragment refId="51"/>      
-      <fragment refId="13"/>      
       <fragment refId="39"/>      
-      <fragment refId="49"/>      
-      <fragment refId="64"/>    
+      <fragment refId="15"/>      
+      <fragment refId="63"/>      
+      <fragment refId="64"/>      
+      <fragment refId="11"/>      
+      <fragment refId="13"/>      
+      <fragment refId="41"/>      
+      <fragment refId="21"/>      
+      <fragment refId="47"/>      
+      <fragment refId="51"/>      
+      <fragment refId="49"/>    
     </interaction-operand>    
     <combined-fragment id="63" interaction-operator="OPT">      
       <interaction-operand id="65" constraint="!employeeSchedule.contains(currentPlannedFeature)">        
@@ -168,37 +168,44 @@
   </combined-fragment>  
   <note id="75">    
     <position height="64" width="161" x="264" y="68"/>    
-    <text><![CDATA[Create a new Map<Employee,Schedule> structure to store planification data]]>
+    <text><![CDATA[Create a new Map<Employee,Schedule> structure to store planification data
+    ]]>
     </text>  
   </note>  
   <note id="76">    
     <position height="81" width="156" x="428" y="249"/>    
-    <text><![CDATA[Compute and creates Schedule instance for every plannedFeature of the PlanningSolution for implicit NRP]]>
+    <text><![CDATA[Compute and creates Schedule instance for every plannedFeature of the PlanningSolution for implicit NRP
+    ]]>
     </text>  
   </note>  
   <note id="77">    
     <position height="75" width="152" x="345" y="468"/>    
-    <text><![CDATA[Find max value between endHour of current plan and endHour of each previous feature]]>
+    <text><![CDATA[Find max value between endHour of current plan and endHour of each previous feature
+    ]]>
     </text>  
   </note>  
   <note id="78">    
     <position height="49" width="171" x="442" y="720"/>    
-    <text><![CDATA[Get Employee schedule or create it if it doesn't exist]]>
+    <text><![CDATA[Get Employee schedule or create it if it doesn't exist
+    ]]>
     </text>  
   </note>  
   <note id="79">    
     <position height="84" width="148" x="589" y="814"/>    
-    <text><![CDATA[Checks if the currentPlannedFeature is already scheduled and tries to schedule it to the current plan]]>
+    <text><![CDATA[Checks if the currentPlannedFeature is already scheduled and tries to schedule it to the current plan
+    ]]>
     </text>  
   </note>  
   <note id="80">    
     <position height="32" width="325" x="389" y="1015"/>    
-    <text><![CDATA[Find max endHour value between all plannedFeatures]]>
+    <text><![CDATA[Find max endHour value between all plannedFeatures
+    ]]>
     </text>  
   </note>  
   <note id="81">    
     <position height="55" width="112" x="573" y="1122"/>    
-    <text><![CDATA[Finally update objectives and quality info]]>
+    <text><![CDATA[Finally update objectives and quality info
+    ]]>
     </text>  
   </note>  
   <message id="3" operation="evaluate(logic.PlanningSolution):void" asynchronous="false">    
@@ -229,7 +236,7 @@
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="16"/>  
   </message>  
-  <message id="17" operation="Schedule(entities.Employee,int,double)" asynchronous="false">    
+  <message id="17" operation="OldSchedule(entities.Employee,int,double)" asynchronous="false">    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="18"/>  
   </message>  

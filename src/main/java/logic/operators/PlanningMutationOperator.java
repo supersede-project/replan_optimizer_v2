@@ -87,7 +87,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	public PlanningSolution execute(PlanningSolution solution) {
 		int nbPlannedTasks = solution.size();
 		
-		for (int i = 0 ; i < nbPlannedTasks ; i++) {
+		/*for (int i = 0 ; i < nbPlannedTasks ; i++) {
 			if (doMutation()) { // If we have to do a mutation
 				PlannedFeature taskToMutate = solution.getPlannedFeature(i);
 				if (randomGenerator.nextDouble() < 0.5) {
@@ -97,7 +97,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 					changeTask(solution, taskToMutate, i);
 				}
 			}
-		}
+		}*/
 		
 		for (int i = nbPlannedTasks ; i < problem.getFeatures().size() ; i++) {
 			if (doMutation()) {

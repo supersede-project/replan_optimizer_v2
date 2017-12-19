@@ -15,6 +15,8 @@ import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +101,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
 		setNumberOfVariables(1);
-		setNumberOfObjectives(2);
+		setNumberOfObjectives(4);
 		features = new ArrayList<>();
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
@@ -190,13 +192,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			Employee employee = currentPlannedFeature.getEmployee();
 			Schedule employeeSchedule = planning.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
 
-			if (!employeeSchedule.contains(currentPlannedFeature))
-                if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
+			if (!employeeSchedule.contains(currentPlannedFeature)) {
+                if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
                     solution.unschedule(currentPlannedFeature);
-
+                }
+			}
+			
 			planning.put(employee, employeeSchedule);
         }
-
+        
         double endHour = 0.0;
         for (Schedule schedule : planning.values())
             for (PlannedFeature pf : schedule.getPlannedFeatures())
@@ -208,9 +212,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		/* Objectives and quality evaluation */
 		SolutionEvaluator evaluator = SolutionEvaluator.getInstance();
 
-		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, evaluator.priorityObjective(solution));
-        solution.setObjective(INDEX_END_DATE_OBJECTIVE, evaluator.endDateObjective(solution));
-        //solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
+		//solution.setObjective(INDEX_PRIORITY_OBJECTIVE, 1.0 - evaluator.completionObjective(solution));
+        //solution.setObjective(INDEX_END_DATE_OBJECTIVE, 1.0 - evaluator.endDateObjective(solution));
+        //solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, 1.0 - evaluator.distributionObjective(solution));
+        
 
 		solutionQuality.setAttribute(solution, evaluator.newQuality(solution));
 	}
@@ -230,7 +235,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 			}
 		}
-
 		pf.setBeginHour(newBeginHour);
 		pf.setEndHour(newBeginHour + feature.getDuration());
 	}
@@ -255,7 +259,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour()) {
-				    precedencesViolated++;
+					precedencesViolated++;
                 }
 			}
 		}
@@ -267,7 +271,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		if (solution.getEndDate() > nbWeeks * nbHoursByWeek) {
 			violatedConstraints++;
 			overall -= 1.0;
-			
 		}
 
 		// Check if the employees assigned to the planned features have the required skills

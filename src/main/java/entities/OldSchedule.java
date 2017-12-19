@@ -6,7 +6,8 @@ import java.util.*;
  * Represents the schedule of an employee during a certain number of weeks
  * and takes care of assigning features to said employee.
  */
-public class Schedule implements Iterable<WeekSchedule> {
+@Deprecated
+public class OldSchedule implements Iterable<WeekSchedule> {
     private List<WeekSchedule> weeks;
     private Employee employee;
     private Set<PlannedFeature> plannedFeatures;
@@ -15,16 +16,11 @@ public class Schedule implements Iterable<WeekSchedule> {
     private double totalHoursLeft;
     private final int nbWeeks;
     private final double hoursPerWeek;
-    private final double globalHoursPerWeek;
-    
-    private double currentHour;
 
-	public Schedule(Employee employee, int nbWeeks, double globalHoursPerWeek) {
+    public OldSchedule(Employee employee, int nbWeeks, double hoursPerWeek) {
         this.employee = employee;
         this.nbWeeks = nbWeeks;
-        this.hoursPerWeek = employee.getWeekAvailability();
-        this.globalHoursPerWeek = globalHoursPerWeek;
-        this.currentHour = 0.0;
+        this.hoursPerWeek = hoursPerWeek;
 
         totalHoursLeft = nbWeeks * employee.getWeekAvailability();
 
@@ -33,8 +29,8 @@ public class Schedule implements Iterable<WeekSchedule> {
     }
 
     // Copy constructor
-    public Schedule(Schedule origin) {
-        this(origin.employee, origin.nbWeeks, origin.globalHoursPerWeek);
+    public OldSchedule(OldSchedule origin) {
+        this(origin.employee, origin.nbWeeks, origin.hoursPerWeek);
 
         totalHoursLeft = origin.totalHoursLeft;
 
@@ -46,14 +42,6 @@ public class Schedule implements Iterable<WeekSchedule> {
         for (PlannedFeature pf : origin.plannedFeatures)
             plannedFeatures.add(new PlannedFeature(pf));
     }
-    
-    public double getCurrentHour() {
-		return currentHour;
-	}
-
-	public void setCurrentHour(double currentHour) {
-		this.currentHour = currentHour;
-	}
 
     /* --- PUBLIC --- */
 
@@ -67,94 +55,123 @@ public class Schedule implements Iterable<WeekSchedule> {
      * @return a boolean indicating whether the PlannedFeature could be scheduled
      */
     public boolean scheduleFeature(PlannedFeature pf, boolean adjustHours) {
-    	
-    	double featureHoursLeft = pf.getFeature().getDuration();
+
+        double featureHoursLeft = pf.getFeature().getDuration();
         // Not enough hours left for this feature in the iteration
         if (totalHoursLeft < featureHoursLeft)
             return false;
-    	
-    	WeekSchedule weekSchedule = getValidWeek(pf);
-    	
-    	if (weekSchedule == null) return false;
-    	
-    	double remainingWeekHours = weekSchedule.getRemainingHours();
-        /*WeekSchedule previousWeek = getPreviousWeek(weekSchedule);
-        PlannedFeature lastPlanned = getLastPlannedFeature(weekSchedule, previousWeek);*/
-    	
-    	if (featureHoursLeft <= remainingWeekHours) {
-    		
-         	pf.setBeginHour(currentHour);
-         	
-         	weekSchedule.addPlannedFeature(pf);
-            weekSchedule.setRemainingHours(remainingWeekHours - featureHoursLeft);
-            weekSchedule.setEndHour(pf.getEndHour());
-            
+
+        WeekSchedule week = getCurrentWeek();
+
+        double remainingWeekHours = week.getRemainingHours();
+
+        WeekSchedule previousWeek = getPreviousWeek(week);
+
+
+        PlannedFeature lastPlanned = getLastPlannedFeature(week, previousWeek);
+
+
+        if (featureHoursLeft <= remainingWeekHours) {
+        	double newBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
+            pf.setBeginHour(newBeginHour);
+            //FIXME max between required for previous Planned Feature and computed here
+            //pf.setBeginHour(Math.max(newBeginHour, pf.getBeginHour()));
+
+            week.addPlannedFeature(pf);
+            week.setRemainingHours(remainingWeekHours - featureHoursLeft);
+
+            pf.setEndHour(pf.getBeginHour() + featureHoursLeft);
+
+            week.setEndHour(pf.getEndHour());
+
             plannedFeatures.add(pf);
-            currentHour += featureHoursLeft;
-            
+
             totalHoursLeft -= featureHoursLeft;
-            pf.setEndHour(currentHour);
-            
         } else {
-        	
-        	pf.setBeginHour(currentHour);
-        	
-        	while (featureHoursLeft > 0.0) {
-        		
-        		weekSchedule.addPlannedFeature(pf);
+        	double pfBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
+            double pfEndHour = pfBeginHour;
+            //FIXME max between required for previous Planned Feature and computed here
+            //pf.setBeginHour(Math.max(pfBeginHour, pf.getBeginHour()));
+            while (featureHoursLeft > 0.0) {
+                week.addPlannedFeature(pf);
+
                 plannedFeatures.add(pf);
 
                 double doneHours = Math.min(featureHoursLeft, remainingWeekHours);
+
                 featureHoursLeft -= doneHours;
                 totalHoursLeft -= doneHours;
-                
-                weekSchedule.setRemainingHours(remainingWeekHours - doneHours);
-                currentHour += doneHours;
-                weekSchedule.setEndHour(currentHour);
-                
-                if (featureHoursLeft > 0.0) weekSchedule = getNextWeek(weekSchedule);
-                remainingWeekHours = weekSchedule.getRemainingHours();
-        		
-        	}
-        	pf.setEndHour(currentHour);
-        	         	
+
+                pfEndHour += featureHoursLeft > 0.0 ? normalizeHours(doneHours) : doneHours;
+
+                week.setRemainingHours(remainingWeekHours - doneHours);
+                week.setEndHour(pfEndHour);
+
+                week = getCurrentWeek();
+                remainingWeekHours = week.getRemainingHours();
+            }
+            pf.setBeginHour(pfBeginHour);
+            pf.setEndHour(pfEndHour);
         }
-    	
-    	return true;
-    }
-    
-    private WeekSchedule getNextWeek(WeekSchedule weekSchedule) {
-    	double beginHour = Math.ceil(currentHour / globalHoursPerWeek) * globalHoursPerWeek;
-    	WeekSchedule nextWeek = new WeekSchedule(beginHour, hoursPerWeek);
-    	weeks.add(nextWeek);
-    	currentHour = beginHour;
-    	return nextWeek;
+
+        return true;
     }
 
-    private WeekSchedule getValidWeek(PlannedFeature pf) {
-    	//System.out.println("This feature should be done at " + pf.getBeginHour() + " but employee can start at " + currentHour);
-    	
-    	double beginHour = Math.max(pf.getBeginHour(), currentHour);
-    	currentHour = beginHour;
-    	
-    	int weekInt = (int) Math.floor(beginHour / globalHoursPerWeek);
-    	
-    	while (weeks.size() - 1 < weekInt) {
-        	double weekBeginHour = weeks.size() > 0 ? weeks.size() * globalHoursPerWeek : 0.0;
-    		WeekSchedule weekSchedule = new WeekSchedule(weekBeginHour, hoursPerWeek);
-    		//currentHour = Math.max(currentHour, weekBeginHour);
-    		weeks.add(weekSchedule);
-    		if (weekInt == weeks.size() - 1) {
-    			weekSchedule.setBeginHour(currentHour);
-    			weekSchedule.setRemainingHours(Math.min(hoursPerWeek, globalHoursPerWeek - currentHour % globalHoursPerWeek));
-    		}
-    	}
-    	
-    	return weeks.get(weekInt);
-    	
+
+    /**
+     * Schedules the given PlannedFeature forcing a time skip if necessary.
+     * To be used only in postprocessing (and maybe in frozen features if you see it fits).
+     * For regular, proper scheduling use {@link Schedule#scheduleFeature(PlannedFeature)}
+     */
+    public void forceSchedule(PlannedFeature pf) {
+        WeekSchedule week = getCurrentWeek();
+
+        PlannedFeature lastPlanned = getLastPlannedFeature(week, getPreviousWeek(week));
+        if (lastPlanned != null) {
+            pf.setBeginHour(Math.max(pf.getBeginHour(), lastPlanned.getEndHour()));
+            pf.setEndHour(pf.getBeginHour() + pf.getFeature().getDuration());
+        }
+
+        int i = weeks.indexOf(week);
+        while (pf.getBeginHour() > (i+1)*hoursPerWeek) {
+
+            totalHoursLeft -= (hoursPerWeek - week.getEndHour());
+
+            week.setBeginHour(i*hoursPerWeek);
+            week.setEndHour((i+1)*hoursPerWeek);
+
+            ++i;
+
+            if (i < weeks.size())
+                week = weeks.get(i);
+            else break;
+        }
+
+        double featureHoursLeft = pf.getFeature().getDuration();
+        double remainingWeekHours = week.getRemainingHours();
+        double pfEndHour = pf.getBeginHour();
+        while (featureHoursLeft > 0.0) {
+            week.addPlannedFeature(pf);
+
+            plannedFeatures.add(pf);
+
+            double doneHours = Math.min(featureHoursLeft, remainingWeekHours);
+
+            featureHoursLeft -= doneHours;
+            totalHoursLeft -= doneHours;
+
+            pfEndHour += featureHoursLeft > 0.0 ? normalizeHours(doneHours) : doneHours;
+
+            week.setRemainingHours(remainingWeekHours - doneHours);
+            week.setEndHour(pfEndHour);
+
+            week = getCurrentWeek();
+            remainingWeekHours = week.getRemainingHours();
+        }
     }
-    
-	public WeekSchedule getWeek(int i) { return weeks.get(i); }
+
+
+    public WeekSchedule getWeek(int i) { return weeks.get(i); }
 
     public int size() { return weeks.size(); }
 
@@ -193,7 +210,22 @@ public class Schedule implements Iterable<WeekSchedule> {
 
     // Returns the first non-full week of the employee, or a new one if there isn't any.
     private WeekSchedule getCurrentWeek() {
-       return null;
+        for (WeekSchedule week : this.weeks)
+            if (week.getRemainingHours() > 0.0)
+                return week;
+
+        WeekSchedule week = new WeekSchedule(0.0, employee.getWeekAvailability());
+
+        weeks.add(week);
+
+        WeekSchedule previous = getPreviousWeek(week);
+
+        if (previous != null) {
+            week.setBeginHour(previous.getEndHour());
+            week.setEndHour(week.getBeginHour());
+        }
+
+        return week;
     }
 
     // Returns the previous week to the given one, null if the given one is the first
@@ -235,7 +267,7 @@ public class Schedule implements Iterable<WeekSchedule> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Schedule schedule = (Schedule) o;
+        OldSchedule schedule = (OldSchedule) o;
 
         if (Double.compare(schedule.totalHoursLeft, totalHoursLeft) != 0) return false;
         if (nbWeeks != schedule.nbWeeks) return false;
@@ -257,4 +289,3 @@ public class Schedule implements Iterable<WeekSchedule> {
         return result;
     }
 }
-

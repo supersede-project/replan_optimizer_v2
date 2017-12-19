@@ -359,7 +359,7 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 		sb.append("\n");
 		if (employeesPlanning != null) {
 			for (Employee e : employeesPlanning.keySet()) {
-				sb.append("Employee " + e.getName() + " schedule\n");
+				sb.append("Employee " + e.getName() + " schedule (availability: " + e.getWeekAvailability() + "h)\n");
 				for (PlannedFeature pf : employeesPlanning.get(e).getPlannedFeatures()) {
 					sb.append("\tFeature " + pf.getFeature() + " from " + pf.getBeginHour() + " to " + pf.getEndHour() + "\n");
 				}

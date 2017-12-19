@@ -21,6 +21,7 @@ import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
 import entities.Skill;
+import entities.WeekSchedule;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolutionQuality;
@@ -72,8 +73,8 @@ public class ValidatePlanningSolutionTest {
 		emptyPlanIfNoSkilledResource();
 		emptyPlanIfNoEmployees();
 		emptyPlanIfNoFeatures();
-		emptyPlanIfFeatureIsSelfDependent();
-		emptyPlanIfFeatureDependenciesCauseDeadlock();
+		//emptyPlanIfFeatureIsSelfDependent();
+		//emptyPlanIfFeatureDependenciesCauseDeadlock();
 		emptyPlanIfNoTime();
 	}
 	
@@ -86,6 +87,33 @@ public class ValidatePlanningSolutionTest {
 		featureWithRequiredSkillsCanBeDoneOnlyByTheSkilledEmployee();
 		noOverlappedJobs();
 		endHourMinusBeginHourEqualsDuration();
+		differentSkillDependentFeatures();
+	}
+
+	private void differentSkillDependentFeatures() {
+		List<Skill> skills = random.skillList(2);
+		List<Employee> employees = random.employeeList(2);
+        List<Feature> features = random.featureList(2);
+
+        employees.get(0).getSkills().add(skills.get(0));
+        employees.get(1).getSkills().add(skills.get(1));
+        
+        features.get(0).getRequiredSkills().add(skills.get(0));
+        features.get(1).getRequiredSkills().add(skills.get(1));
+
+        features.get(1).getPreviousFeatures().add(features.get(0));
+
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
+        // System.out.println(problem.toString());
+        // System.out.println(solution.toString());
+        /*for (Employee e : solution.getEmployeesPlanning().keySet()) {
+        	System.out.println(e.getName() + " ");
+        	for (WeekSchedule w : solution.getEmployeesPlanning().get(e).getAllWeeks()) {
+        		System.out.println(w.getBeginHour() + " to " + w.getEndHour() + " with " + w.getRemainingHours());
+        	}
+        }*/
+
 	}
 
 	/**

@@ -38,10 +38,10 @@ public class ParameterizedNRPTest {
 		nbSkills = 3;
 		nbEmployees = 5;
 		
-		nbWeeks = 4;
+		nbWeeks = 10;
 		nbHoursPerWeek = 40.0;
 		
-		dependencyRate = 0.25;
+		dependencyRate = 0.30;
 		availabilityRates = new double[]{0.5,0.5,0.8,1.0,1.0};
 		skillEmployeeRates = new double[]{0.3,0.4,0.8};
 		skillFeatureRates = new double[]{0.2,0.4,0.6};
@@ -60,11 +60,11 @@ public class ParameterizedNRPTest {
 		System.out.println(nrp.toString());
 		
 		SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
-		//for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			PlanningSolution solution = solver.executeNRP(nrp);
 			System.out.println("***BEST SOLUTION FOUND***");
 			System.out.println(solution.toString());
-		//}
+		}
 		
 	}
 	

@@ -43,7 +43,7 @@ public class AlgorithmParameters {
     /* --- SETTERS/GETTERS ---*/
     private void setCommonDefaultParameters() {
         setCrossOverProbability(0.8);
-        setRateOfNotRandomSolution(0.25);
+        setRateOfNotRandomSolution(1.0);
     }
 
     private void setDefaultParametersFor(SolverNRP.AlgorithmType algorithmType) {
@@ -53,7 +53,7 @@ public class AlgorithmParameters {
                 setPopulationSize(2500);
                 break;
             default:
-                setNumberOfIterations(100000);
+                setNumberOfIterations(200000);
                 setPopulationSize(100);
         }
     }
