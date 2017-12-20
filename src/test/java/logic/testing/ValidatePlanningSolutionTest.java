@@ -1,15 +1,8 @@
 package logic.testing;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,7 +14,6 @@ import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
 import entities.Skill;
-import entities.WeekSchedule;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolutionQuality;

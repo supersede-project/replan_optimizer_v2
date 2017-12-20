@@ -18,6 +18,7 @@ import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,6 +179,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	@Override
 	public PlanningSolution createSolution() {
 		return new PlanningSolution(this);
+		//return new PlanningSolution(this, Arrays.asList());
 	}
 
 	@Override

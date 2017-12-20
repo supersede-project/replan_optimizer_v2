@@ -2,6 +2,7 @@ package logic.testing;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import entities.Employee;
@@ -29,8 +30,21 @@ public class ScheduleTest {
 		schedule.scheduleFeature(pf);
 		schedule.scheduleFeature(pf2);
 		schedule.scheduleFeature(pf3);
+		
+		Assert.assertEquals(schedule.getCurrentHour(), 85.0, 0.0);
+		Assert.assertEquals(schedule.getAllWeeks().size(), 3);
+		
+		Assert.assertEquals(schedule.getPlannedFeatures().get(0).getBeginHour(), 0.0, 0.0);
+		Assert.assertEquals(schedule.getPlannedFeatures().get(0).getEndHour(), 55.0, 0.0);
+		
+		Assert.assertEquals(schedule.getPlannedFeatures().get(1).getBeginHour(), 55.0, 0.0);
+		Assert.assertEquals(schedule.getPlannedFeatures().get(1).getEndHour(), 60.0, 0.0);
+		
+		Assert.assertEquals(schedule.getPlannedFeatures().get(2).getBeginHour(), 60.0, 0.0);
+		Assert.assertEquals(schedule.getPlannedFeatures().get(2).getEndHour(), 85.0, 0.0);
 
-		for (int i = 0; i < schedule.getAllWeeks().size(); ++i) {
+		
+		/*for (int i = 0; i < schedule.getAllWeeks().size(); ++i) {
 			System.out.println(schedule.getWeek(i).getBeginHour() + " to " + schedule.getWeek(i).getEndHour() + " with " + 
 		schedule.getWeek(i).getRemainingHours() + " and " + schedule.getCurrentHour() + " or " + schedule.getTotalHoursLeft());
 		}
@@ -38,7 +52,7 @@ public class ScheduleTest {
 			System.out.println(schedule.getPlannedFeatures().get(i).getFeature().getName() 
 					+ " from " + schedule.getPlannedFeatures().get(i).getBeginHour() + " to "
 					+ schedule.getPlannedFeatures().get(i).getEndHour());
-		}
+		}*/
 	}
 
 }

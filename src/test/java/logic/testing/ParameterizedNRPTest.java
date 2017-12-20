@@ -34,11 +34,11 @@ public class ParameterizedNRPTest {
 	
 	@Before
 	public void before() {
-		nbFeatures = 20;
+		nbFeatures = 50;
 		nbSkills = 3;
 		nbEmployees = 4;
 		
-		nbWeeks = 3;
+		nbWeeks = 2;
 		nbHoursPerWeek = 40.0;
 		
 		dependencyRate = 0.30;
@@ -64,6 +64,7 @@ public class ParameterizedNRPTest {
 			PlanningSolution solution = solver.executeNRP(nrp);
 			System.out.println("***BEST SOLUTION FOUND***");
 			System.out.println(solution.toString());
+			System.out.println("***REPLANNING***");
 		}
 		
 	}
