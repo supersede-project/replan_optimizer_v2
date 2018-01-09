@@ -15,22 +15,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * A solution for a particular {@link NextReleaseProblem}.
  * It also includes chunks of logic which should probably go somewhere else.
  */
-public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, NextReleaseProblem> {
+public class PlanningSolution extends AbstractGenericSolution<Integer, NextReleaseProblem> {
 
 	private static final long serialVersionUID = 615615442782301271L; //Generated Id
-
+	
+	private static final int INDEX_NB_FEATURES_VARIABLE = 0;
+	
     /**
      * If true, the solution will be randomly initialized on creation. There is a particular case in which you won't
      * want this to happen, when creating child solutions in {@link logic.operators.PlanningCrossoverOperator}.
      */
     private boolean INITIALIZE_ON_CREATE = true;
 	
-    private List<PlannedFeature> plannedFeatures; 	            // Included features
-	private List<Feature> undoneFeatures; 						// Not included features
+    private CopyOnWriteArrayList<PlannedFeature> plannedFeatures; 	            // Included features
+	private CopyOnWriteArrayList<Feature> undoneFeatures; 						// Not included features
     private Map<Employee, Schedule> employeesPlanning; 			// The employees' schedule
 	private double endDate;     								// The end hour of the solution
     private Analytics analytics = null;
-
+    
     /* --- GETTERS / SETTERS --- */
 	public double getEndDate() {
 		return endDate;
@@ -72,13 +74,13 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     public Analytics getAnalytics() { return analytics; }
     public void setAnalytics(Analytics analytics) { this.analytics = analytics; }
 
-
 	/* --- CONSTRUCTORS --- */
 
     // constructor (normal)
 	public PlanningSolution(NextReleaseProblem problem) {
 		super(problem);
-	    numberOfViolatedConstraints = 0;
+		this.problem = problem;
+	    //numberOfViolatedConstraints = 0;
 	    initializePlannedFeatureVariables();
 	    initializeObjectiveValues();
 	}
@@ -86,7 +88,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     public PlanningSolution(NextReleaseProblem problem, boolean initializeOnCreate) {
         super(problem);
         INITIALIZE_ON_CREATE = initializeOnCreate;
-        numberOfViolatedConstraints = 0;
+        //numberOfViolatedConstraints = 0;
         initializePlannedFeatureVariables();
         initializeObjectiveValues();
     }
@@ -95,16 +97,24 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
 
-	    numberOfViolatedConstraints = 0;
+	    //numberOfViolatedConstraints = 0;
 	    undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
 
 		this.plannedFeatures = new CopyOnWriteArrayList<>();
 		for (PlannedFeature plannedFeature : plannedFeatures) {
+			undoneFeatures.remove(plannedFeature.getFeature());
 			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
 			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
 		}
 
+		//FIXME update data to increase week scheduling
+		int nbFeaturesToDo = undoneFeatures.size();
+		if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
+            initializePlannedFeaturesRandomly(nbFeaturesToDo);
+        else
+            initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
+		
 	    initializeObjectiveValues();
 	}
 
@@ -112,7 +122,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public PlanningSolution(PlanningSolution origin) {
 		super(origin.problem);
 
-	    numberOfViolatedConstraints = origin.numberOfViolatedConstraints;
+	    //numberOfViolatedConstraints = origin.numberOfViolatedConstraints;
 
 	    plannedFeatures = new CopyOnWriteArrayList<>();
 	    for (PlannedFeature plannedFeature : origin.getPlannedFeatures())
@@ -181,20 +191,41 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	// Initialize the variables. Load a random number of planned features
 	private void initializePlannedFeatureVariables() {
 		int nbFeaturesToDo = problem.getFeatures().size();
-		
+		setVariableValue(INDEX_NB_FEATURES_VARIABLE, nbFeaturesToDo);
 		undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
 		plannedFeatures = new CopyOnWriteArrayList<>();
-
+		
 		if (INITIALIZE_ON_CREATE) {
             if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
                 initializePlannedFeaturesRandomly(nbFeaturesToDo);
             else
                 initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
         }
+		
 	}
 
-    // Initializes the planned features randomly
+    public double computeCriticalPath() {
+    	double currentCriticalPath = 0.;
+		for (PlannedFeature pf : getPlannedFeatures()) {
+			double newPath = getPathDuration(pf.getFeature());
+			if (newPath > currentCriticalPath) currentCriticalPath = newPath;
+		}
+		return currentCriticalPath;
+	}
+	private double getPathDuration(Feature feature) {
+		if (feature.getPreviousFeatures().isEmpty())
+			return feature.getDuration();
+		else {
+			double maxPath = 0.;
+			for (Feature f : feature.getPreviousFeatures()) {
+				double path = getPathDuration(f);
+				if (path > maxPath) maxPath = path;
+			}
+			return maxPath + feature.getDuration();
+		}
+	}
+	// Initializes the planned features randomly
     private void initializePlannedFeaturesRandomly(int numFeaturesToPlan) {
         Feature featureToDo;
         List<Employee> skilledEmployees;
@@ -242,7 +273,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public void scheduleAtTheEnd(Feature feature, Employee e) {
 		if (isAlreadyPlanned(feature)) plannedFeatures.remove(findPlannedFeature(feature));
 		else undoneFeatures.remove(feature);
-        plannedFeatures.add(new PlannedFeature(feature, e));
+		PlannedFeature newPlannedFeature = new PlannedFeature(feature, e);
+        plannedFeatures.add(newPlannedFeature);
 	}
 	
 	// Schedule a random undone feature to a random place in the planning
@@ -301,7 +333,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
 
 	@Override
-	public Solution<PlannedFeature> copy() {
+	public Solution<Integer> copy() {
 		return new PlanningSolution(this);
 	}
 	
@@ -327,8 +359,21 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	}
 	
 	@Override
+	//TODO better to string
 	public String toString() {
-		return String.format("%d/%d features planned", plannedFeatures.size(), plannedFeatures.size() + undoneFeatures.size());
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%d/%d features planned", plannedFeatures.size(), 
+				plannedFeatures.size() + undoneFeatures.size()));
+		sb.append("\n");
+		if (employeesPlanning != null) {
+			for (Employee e : employeesPlanning.keySet()) {
+				sb.append("Employee " + e.getName() + " schedule (availability: " + e.getWeekAvailability() + "h)\n");
+				for (PlannedFeature pf : employeesPlanning.get(e).getPlannedFeatures()) {
+					sb.append("\tFeature " + pf.getFeature() + " from " + pf.getBeginHour() + " to " + pf.getEndHour() + "\n");
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	public String toR() {

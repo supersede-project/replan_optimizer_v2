@@ -1,8 +1,12 @@
+package logic.test;
 import entities.parameters.AlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolverNRP;
+import logic.analytics.PerformanceCharts;
+
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -79,7 +83,7 @@ public class AlgorithmPerformanceTest {
      */
 
     //@Test
-    private void AveragePlannedFeaturesTest()
+    public void AveragePlannedFeaturesTest()
     {
         NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
         SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
@@ -99,7 +103,10 @@ public class AlgorithmPerformanceTest {
 
             totalPlannedFeatures += solution.getPlannedFeatures().size();
         }
-        String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Random");
+        
+        PerformanceCharts.generateAvgPlannedFeaturesChart(base, solver, iterations, nbPlannedFeatures, totalPlannedFeatures);
+        
+        /*String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Random");
         XYChart chart = new XYChartBuilder().width(1024).height(512).title(title)
                 .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
         chart.addSeries("Number of planned features", iterations, nbPlannedFeatures);
@@ -112,10 +119,10 @@ public class AlgorithmPerformanceTest {
         chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
                 .setXAxisMax((double) iterations.size()).setYAxisMax((double) base.getFeatures().size());
 
-        saveChart(chart, String.format("AveragePlannedFeatures_%s_%s", algorithmName(solver), timestamp()));
+        saveChart(chart, String.format("AveragePlannedFeatures_%s_%s", algorithmName(solver), timestamp()));*/
     }
 
-    //@Test
+    @Test
     public void populationSizeTest() {
         for (int k = 0; k < 5; ++k) {
             NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
@@ -140,12 +147,14 @@ public class AlgorithmPerformanceTest {
                 plannedFeatures.add(solution.size());
             }
 
-            XYChart chart = new XYChartBuilder().width(1024).height(512).title("Population/Performance chart")
+            PerformanceCharts.generatePopulationChart(solver, populationSize, executionTime, plannedFeatures);
+            
+           /* XYChart chart = new XYChartBuilder().width(1024).height(512).title("Population/Performance chart")
                     .xAxisTitle("Population size").build();
             chart.addSeries("Execution time (seconds)", populationSize, executionTime);
             chart.addSeries("Number of planned features", populationSize, plannedFeatures);
 
-            saveChart(chart, String.format("PopulationSizeTest_%s_%s", algorithmName(solver), timestamp()));
+            saveChart(chart, String.format("PopulationSizeTest_%s_%s", algorithmName(solver), timestamp()));*/
         }
     }
 }

@@ -1,3 +1,4 @@
+package logic.test;
 import entities.*;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
@@ -21,7 +22,7 @@ public class RandomThings {
 
     private Validator validator;
 
-    RandomThings() {
+    public RandomThings() {
         validator = new Validator();
     }
 
@@ -51,6 +52,15 @@ public class RandomThings {
                 new ArrayList<>(),
                 new ArrayList<>());
     }
+    
+    public Feature feature(double nbHoursMin, double nbHoursMax) {
+        return new Feature(
+                String.format("F%03d", ++featureID),
+                PriorityLevel.getPriorityByLevel(random.nextInt(0,5)),
+                Math.floor(random.nextDouble(nbHoursMin, nbHoursMax)),
+                new ArrayList<>(),
+                new ArrayList<>());
+    }
 
     public List<Feature> featureList(int nbElems) {
         List<Feature> features = new ArrayList<>();
@@ -61,6 +71,16 @@ public class RandomThings {
         }
         return features;
     }
+    
+    public List<Feature> featureListWithHourRange(int nbElems, double minHours, double maxHours) {
+    	List<Feature> features = new ArrayList<>();
+        while (features.size() < nbElems) {
+            Feature f = feature(minHours, maxHours);
+            if (!features.contains(f))
+                features.add(f);
+        }
+        return features;
+	}
 
     public Employee employee() {
         return new Employee(String.format("E%03d", ++employeeID), 40.0, new ArrayList<>());

@@ -1,3 +1,4 @@
+package logic.test;
 import entities.*;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;

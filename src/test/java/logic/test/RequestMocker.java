@@ -1,3 +1,4 @@
+package logic.test;
 import com.google.gson.Gson;
 import entities.Employee;
 import entities.Feature;

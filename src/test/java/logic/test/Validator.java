@@ -1,3 +1,4 @@
+package logic.test;
 import entities.*;
 import logic.PlanningSolution;
 import org.junit.Assert;

@@ -20,19 +20,25 @@ public class SolutionEvaluator {
 
 
     /* --- OBJECTIVES --- */
-    public double priorityObjective(PlanningSolution solution) {
-        return solution.getPriorityScore();
+    public double completionObjective(PlanningSolution solution) {
+    	if (solution.getProblem().getFeatures().size() == 0) return 0.0;
+        return 1.0 - (double) solution.getUndoneFeatures().size() / (double) (solution.getProblem().getFeatures().size());
     }
 
     public double endDateObjective(PlanningSolution solution) {
+    	
+    	if (solution.getPlannedFeatures().size() == 0) return 0.0;
+    	
         NextReleaseProblem problem = solution.getProblem();
         double worstEndDate = problem.getNbWeeks() * problem.getNbHoursByWeek();
 
-        return solution.getPlannedFeatures().isEmpty() ? worstEndDate : solution.getEndDate();
+        //return solution.getPlannedFeatures().isEmpty() ? worstEndDate : solution.getEndDate();
+        return 1.0 - Math.max(0.0,(solution.getEndDate() - solution.computeCriticalPath()) / (worstEndDate - solution.computeCriticalPath()));
     }
-
+    
     public double distributionObjective(PlanningSolution solution) {
-        Map<Employee, Double> hoursPerEmployee = new HashMap<>();
+    	if (solution.getPlannedFeatures().size() == 0) return 0.0;
+    	Map<Employee, Double> hoursPerEmployee = new HashMap<>();
         double totalHours = 0.0;
         for (Map.Entry<Employee, Schedule> entry : solution.getEmployeesPlanning().entrySet()) {
             Employee employee = entry.getKey();
@@ -46,42 +52,92 @@ public class SolutionEvaluator {
                 hoursPerEmployee.put(employee, aux);
             }
         }
-
-        int nbEmployees = hoursPerEmployee.size();
-        double expectedAvg = totalHours/nbEmployees;
-        double result = 0.0;
+        
+        double totalEmployees = solution.getProblem().getEmployees().size();
+        //Calculates the standard deviation of the hours
+        double expectedAvg = totalHours/totalEmployees;
+        double sum = 0.0;
         for (Double nbHours : hoursPerEmployee.values()) {
-            double rating;
-            if (nbHours <= expectedAvg)
-                rating = nbHours * (1/expectedAvg);
-            else
-                rating = Math.max(0.0, 1.0 - (nbHours - expectedAvg) * (1/expectedAvg));
-
-            result += rating/nbEmployees;
+            sum += Math.pow(Math.abs(nbHours - expectedAvg), 2);
         }
-
-        return 1.0 - result;    // Because the algorithm minimizes objectives
+        double standardDeviation = Math.sqrt(sum/totalEmployees);
+        
+        //Normalizes the standard deviation
+        double max = ((totalEmployees - 1.0) * Math.pow(expectedAvg, 2) + Math.pow(totalHours - expectedAvg, 2))/totalEmployees;
+        double normalizedSd = max > 0 ? standardDeviation / max : 0;
+        		
+        return 1.0 - normalizedSd;
     }
 
 
-    /* --- QUALITY --- */
-    public double quality(PlanningSolution solution) {
+    /* --- OLD QUALITY --- */
+    /*public double quality(PlanningSolution solution) {
         NextReleaseProblem problem = solution.getProblem();
         double worstEndDate = problem.getNbWeeks() * problem.getNbHoursByWeek();
 
         double unplannedFeatures = solution.getUndoneFeatures().size();
         double totalFeatures = problem.getFeatures().size();
         double penalty = worstEndDate/totalFeatures;
-
-        double endDateQuality = Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
-        double priorityQuality = 1.0 - priorityObjective(solution) / worstScore(problem);
+        //FIXME updated to avoid NaN solution answers
+        double endDateQuality = totalFeatures > 0 ?
+        		Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate) : 0;
+        //FIXME updated to avoid NaN solution answers
+        double priorityQuality = worstScore(problem) > 0 ? 
+        		1.0 - priorityObjective(solution) / worstScore(problem) : 0;
         double distributionQuality = 1.0 - distributionObjective(solution);
-
+        //System.out.println(endDateQuality + " " + priorityQuality + " " + distributionQuality);
         return (endDateQuality*0.3 + priorityQuality*0.4 + distributionQuality*0.3);
+    }*/
+    
+    private int COMPLETION_SCALE;
+    
+    /* --- NEW QUALITY --- */
+    public double newQuality(PlanningSolution solution) {
+        
+        double endDateQuality = endDateObjective(solution);
+                
+        double completionQuality = completionObjective(solution);
+        		
+        double distributionQuality = distributionObjective(solution);
+        
+        double priorityScore = priorityScore(solution);
+                        
+        double qualityScore = (
+        		endDateQuality*0.5 + 
+//        		completionQuality*0.0 + 
+        		distributionQuality*0.5) / 
+        		(double) Math.pow(10, COMPLETION_SCALE);
+        
+        double quality = priorityScore + qualityScore;
+        
+        /*System.out.println("For " + solution.getPlannedFeatures().size() + " planned features:");
+        System.out.println("End date " + endDateQuality);
+        System.out.println("Completion " + completionQuality);
+        System.out.println("Distirbution " + distributionQuality);
+        System.out.println("Priority " + priorityScore);*/
+
+        return quality;
+    	
     }
 
 
-    /* --- PRIVATE AUX --- */
+    private double priorityScore(PlanningSolution solution) {
+    	if (solution.getPlannedFeatures().size() == 0) return 0.0;
+    	COMPLETION_SCALE = 0;
+    	double aux = 0.9;
+        double max = 0;
+        int worstScore = (int) worstScore(solution.getProblem());
+        while (worstScore > 0) {
+        	max += aux;
+        	aux /= 10;
+        	worstScore /= 10;
+        	++COMPLETION_SCALE;
+        }
+        double score = worstScore(solution.getProblem());
+        return max * (score - solution.getPriorityScore()) / worstScore(solution.getProblem());
+	}
+
+	/* --- PRIVATE AUX --- */
     private double worstScore(NextReleaseProblem problem) {
         return problem.getFeatures().stream()
                 .map(Feature::getPriority)

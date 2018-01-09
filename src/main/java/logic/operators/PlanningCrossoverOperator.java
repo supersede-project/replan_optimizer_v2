@@ -37,6 +37,8 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
 	 * The next release problem
 	 */
 	private NextReleaseProblem problem;
+	
+	private final int numberOfParents = 2;
 
 	
 	/* --- Constructors --- */
@@ -125,5 +127,10 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
 		}*/
 		
 		return offspring;
+	}
+
+	@Override
+	public int getNumberOfParents() {
+		return numberOfParents;
 	}
 }

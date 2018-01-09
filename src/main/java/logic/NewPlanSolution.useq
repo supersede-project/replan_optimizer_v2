@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.2.2" icons="true" generate-combined-fragments="true">  
+  <object id="1" language="java" name="logic.PlanningSolution" project="optimizer" 
+    file="/optimizer/src/main/java/logic/PlanningSolution.java" binary="false" label="planningSolution" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="101" y="0"/>    
+    <execution id="2">      
+      <position height="1203" width="0" x="0" y="73"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="1146" width="0" x="0" y="111"/>    
+    </execution>    
+    <execution id="6">      
+      <position height="19" width="0" x="0" y="158"/>    
+    </execution>    
+    <execution id="8">      
+      <position height="980" width="0" x="0" y="205"/>    
+    </execution>    
+    <execution id="10">      
+      <position height="19" width="0" x="0" y="1219"/>    
+    </execution>    
+    <execution id="20">      
+      <position height="19" width="0" x="0" y="452"/>    
+    </execution>    
+    <execution id="22">      
+      <position height="624" width="0" x="0" y="542"/>    
+    </execution>    
+    <execution id="24">      
+      <position height="19" width="0" x="0" y="589"/>    
+    </execution>    
+    <execution id="32">      
+      <position height="300" width="0" x="0" y="797"/>    
+    </execution>    
+    <execution id="34">      
+      <position height="19" width="0" x="0" y="1128"/>    
+    </execution>    
+    <execution id="38">      
+      <position height="19" width="0" x="0" y="909"/>    
+    </execution>  
+  </object>  
+  <object id="45" language="java" name="entities.PlannedFeature" project="optimizer" 
+    file="/optimizer/src/main/java/entities/PlannedFeature.java" binary="false" label="newPlannedFeature" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="42">      
+      <position height="19" width="0" x="0" y="1021"/>    
+    </execution>  
+  </object>  
+  <object id="46" language="java" name="java.util.List" project="optimizer" 
+    file="/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar" binary="true" label="possibleFeatures" type="interface" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="26">      
+      <position height="19" width="0" x="0" y="654"/>    
+    </execution>  
+  </object>  
+  <object id="47" language="java" name="entities.Feature" project="optimizer" 
+    file="/optimizer/src/main/java/entities/Feature.java" binary="false" label="featureToDo" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="30">      
+      <position height="19" width="0" x="0" y="741"/>    
+    </execution>  
+  </object>  
+  <object id="48" language="java" name="java.util.List" project="optimizer" 
+    file="/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar" binary="true" label="skilledEmployees" type="interface" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>  
+  </object>  
+  <object id="49" language="java" name="logic.NextReleaseProblem" project="optimizer" 
+    file="/optimizer/src/main/java/logic/NextReleaseProblem.java" binary="false" label="problem" type="class" 
+    autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="12">      
+      <position height="19" width="0" x="0" y="233"/>    
+    </execution>    
+    <execution id="28">      
+      <position height="19" width="0" x="0" y="698"/>    
+    </execution>  
+  </object>  
+  <object id="50" language="java" name="java.util.concurrent.CopyOnWriteArrayList" project="optimizer" 
+    file="/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar" binary="true" label="undoneFeatures" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="14">      
+      <position height="19" width="0" x="0" y="269"/>    
+    </execution>    
+    <execution id="16">      
+      <position height="19" width="0" x="0" y="305"/>    
+    </execution>    
+    <execution id="40">      
+      <position height="19" width="0" x="0" y="973"/>    
+    </execution>  
+  </object>  
+  <object id="51" language="java" name="java.util.concurrent.CopyOnWriteArrayList" project="optimizer" 
+    file="/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar" binary="true" label="plannedFeatures" type="class" autoSize="true">    
+    <position height="0" width="0" x="0" y="0"/>    
+    <execution id="18">      
+      <position height="19" width="0" x="0" y="343"/>    
+    </execution>    
+    <execution id="36">      
+      <position height="19" width="0" x="0" y="852"/>    
+    </execution>    
+    <execution id="44">      
+      <position height="19" width="0" x="0" y="1059"/>    
+    </execution>  
+  </object>  
+  <combined-fragment id="52" interaction-operator="OPT">    
+    <interaction-operand id="53" constraint="INITIALIZE_ON_CREATE">      
+      <fragment refId="54"/>    
+    </interaction-operand>    
+    <combined-fragment id="54" interaction-operator="ALT">      
+      <interaction-operand id="55" 
+        constraint="randomGenerator.nextDouble() &gt; getProblem().getAlgorithmParameters().getRateOfNotRandomSolution()">        
+        <fragment refId="19"/>      
+      </interaction-operand>      
+      <interaction-operand id="56" constraint="else">        
+        <fragment refId="57"/>        
+        <fragment refId="21"/>        
+        <fragment refId="23"/>      
+      </interaction-operand>      
+      <combined-fragment id="57" interaction-operator="LOOP">        
+        <interaction-operand id="58" 
+          constraint="while: i &lt; numFeaturesToPlan &amp;&amp; possibleFeatures.size() &gt; 0">          
+          <fragment refId="25"/>          
+          <fragment refId="59"/>          
+          <fragment refId="33"/>          
+          <fragment refId="29"/>          
+          <fragment refId="31"/>          
+          <fragment refId="43"/>          
+          <fragment refId="27"/>          
+          <fragment refId="41"/>        
+        </interaction-operand>        
+        <combined-fragment id="59" interaction-operator="ALT">          
+          <interaction-operand id="60" constraint="isAlreadyPlanned(feature)">            
+            <fragment refId="35"/>            
+            <fragment refId="37"/>          
+          </interaction-operand>          
+          <interaction-operand id="61" constraint="else">            
+            <fragment refId="39"/>          
+          </interaction-operand>        
+        </combined-fragment>      
+      </combined-fragment>    
+    </combined-fragment>  
+  </combined-fragment>  
+  <note id="62">    
+    <position height="75" width="170" x="352" y="152"/>    
+    <text><![CDATA[Create undoneFeatures list with all undone features and an empty plannedFeatures for future planned features]]>
+    </text>  
+  </note>  
+  <note id="63">    
+    <position height="50" width="230" x="356" y="415"/>    
+    <text><![CDATA[Create a random solution - i.e. without considering precedences - according to notRandomSolution probability]]>
+    </text>  
+  </note>  
+  <note id="64">    
+    <position height="61" width="235" x="356" y="508"/>    
+    <text><![CDATA[Create a solution based on feature precedences according to the notRandomSolution probability]]>
+    </text>  
+  </note>  
+  <note id="65">    
+    <position height="59" width="274" x="411" y="620"/>    
+    <text><![CDATA[While there are possible features to plan and the number of planned features is lower than the number of features to plan for this release plan]]>
+    </text>  
+  </note>  
+  <note id="66">    
+    <position height="72" width="177" x="412" y="721"/>    
+    <text><![CDATA[Get a random possible feature and assign it to a random skilled employee by assigning the feature to the end]]>
+    </text>  
+  </note>  
+  <note id="67">    
+    <position height="52" width="180" x="382" y="1005"/>    
+    <text><![CDATA[Create a PlannedFeature instance and add it to the plannedFeature list]]>
+    </text>  
+  </note>  
+  <note id="68">    
+    <position height="59" width="152" x="383" y="1080"/>    
+    <text><![CDATA[Update new possible features according to last planned feature]]>
+    </text>  
+  </note>  
+  <message id="3" operation="PlanningSolution(logic.NextReleaseProblem)" asynchronous="false">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="5" operation="AbstractGenericSolution(P)" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </message>  
+  <message id="7" operation="initializePlannedFeatureVariables():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>  
+  <message id="9" operation="initializeObjectiveValues():void" asynchronous="false">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="11" operation="getFeatures():java.util.List&lt;Feature&gt;" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="12"/>  
+  </message>  
+  <message id="13" operation="CopyOnWriteArrayList()" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="14"/>  
+  </message>  
+  <message id="15" operation="addAll(java.util.Collection&lt;? extends E&gt;):boolean" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="16"/>  
+  </message>  
+  <message id="17" operation="CopyOnWriteArrayList()" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="18"/>  
+  </message>  
+  <message id="19" operation="initializePlannedFeaturesRandomly(int):void" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="20"/>  
+  </message>  
+  <message id="21" operation="initializePlannedFeaturesWithPrecedences(int):void" asynchronous="false">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="22"/>  
+  </message>  
+  <message id="23" operation="updatePossibleFeatures():java.util.List&lt;Feature&gt;" asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="24"/>  
+  </message>  
+  <message id="25" operation="get(int):E" asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="26"/>  
+  </message>  
+  <message id="27" operation="getSkilledEmployees(java.util.List&lt;entities.Skill&gt;):java.util.List&lt;Employee&gt;" 
+    asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="28"/>  
+  </message>  
+  <message id="29" operation="getRequiredSkills():java.util.List&lt;Skill&gt;" asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="30"/>  
+  </message>  
+  <message id="31" operation="scheduleAtTheEnd(entities.Feature,entities.Employee):void" asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="32"/>  
+  </message>  
+  <message id="33" operation="updatePossibleFeatures():java.util.List&lt;Feature&gt;" asynchronous="false">    
+    <end type="SOURCE" refId="22"/>    
+    <end type="TARGET" refId="34"/>  
+  </message>  
+  <message id="35" operation="remove(java.lang.Object):boolean" asynchronous="false">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="36"/>  
+  </message>  
+  <message id="37" operation="findPlannedFeature(entities.Feature):entities.PlannedFeature" asynchronous="false">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="38"/>  
+  </message>  
+  <message id="39" operation="remove(java.lang.Object):boolean" asynchronous="false">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="40"/>  
+  </message>  
+  <message id="41" operation="PlannedFeature(entities.Feature,entities.Employee)" asynchronous="false">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="42"/>  
+  </message>  
+  <message id="43" operation="add(E):boolean" asynchronous="false">    
+    <end type="SOURCE" refId="32"/>    
+    <end type="TARGET" refId="44"/>  
+  </message>
+</sequence-diagram>
