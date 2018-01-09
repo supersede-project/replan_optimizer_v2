@@ -96,18 +96,22 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
     // constructor (with previous plan)
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
-
-	    //numberOfViolatedConstraints = 0;
 	    undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
 
 		this.plannedFeatures = new CopyOnWriteArrayList<>();
+		
+		//Update features according to replan
 		for (PlannedFeature plannedFeature : plannedFeatures) {
-			undoneFeatures.remove(plannedFeature.getFeature());
-			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
-			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			//undoneFeatures.remove(plannedFeature.getFeature());
+			//if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
+			//else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			if (plannedFeature.isFrozen() || plannedFeature.getBeginHour() < problem.getReplanHour()) {
+				undoneFeatures.remove(plannedFeature.getFeature());
+				this.plannedFeatures.add(plannedFeature);
+			}
 		}
-
+		
 		//FIXME update data to increase week scheduling
 		int nbFeaturesToDo = undoneFeatures.size();
 		if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())

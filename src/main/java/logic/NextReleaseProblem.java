@@ -46,7 +46,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	// PROBLEM
 	private List<Feature> features;
 	private List<Employee> employees;
+	//FIXME duplicated instances, check if needed
 	private ApiPlanningSolution previousSolution;
+	private PlanningSolution prevSolution;
+	private double replanHour; 		// The hour of the requested replan
 	private int nbWeeks; 			// The number of weeks of the iteration
 	private double nbHoursByWeek; 	// The number of worked hours by week
 	private AlgorithmParameters algorithmParameters;
@@ -60,6 +63,18 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private double worstEndDate; //The worst end date, if there is no planned feature
 
 	// GETTERS / SETTERS
+	public double getReplanHour() {
+		return replanHour;
+	}
+	public void setReplanHour(double replanHour) {
+		this.replanHour = replanHour;
+	}
+	public PlanningSolution getPrevSolution() {
+		return prevSolution;
+	}
+	public void setPreviousSolution(PlanningSolution previousSolution) {
+		this.prevSolution = previousSolution;
+	}
 	public ApiPlanningSolution getPreviousSolution() {
 		return previousSolution;
 	}
@@ -126,6 +141,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					this.features.add(feature);
 		
 		worstEndDate = nbWeeks * nbHoursByWeek;
+		replanHour = 0.0;
 
 		initializeWorstScore();
 		initializeNumberOfConstraint();
@@ -140,6 +156,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 							  int nbWeeks, double nbHoursPerWeek, ApiPlanningSolution previousSolution) {
 		this(features, employees, nbWeeks, nbHoursPerWeek);
 		this.previousSolution = previousSolution;
+	}
+	
+	// Constructor (for replanning)
+	public NextReleaseProblem(PlanningSolution previousSolution, List<Feature> features, List<Employee> employees,
+								int nbWeeks, double nbHoursPerWeek, double replanHour) {
+		this(features, employees, nbWeeks, nbHoursPerWeek);
+		this.prevSolution = previousSolution;
+		this.replanHour = replanHour;
+		
 	}
 
 	// Copy constructor
@@ -179,7 +204,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	@Override
 	public PlanningSolution createSolution() {
 		//return new PlanningSolution(this);
-		if (previousSolution != null) return new PlanningSolution(this, previousSolution.getJobs());
+		if (prevSolution != null) return new PlanningSolution(this, prevSolution.getPlannedFeatures());
 		else return new PlanningSolution(this);
 	}
 
@@ -189,12 +214,12 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
-
+		
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
             computeHours(solution, currentPlannedFeature);
 			Employee employee = currentPlannedFeature.getEmployee();
 			Schedule employeeSchedule = planning.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
-
+			
 			if (!employeeSchedule.contains(currentPlannedFeature)) {
                 if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
                     solution.unschedule(currentPlannedFeature);
@@ -232,12 +257,17 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double newBeginHour = pf.getBeginHour();
 		Feature feature = pf.getFeature();
 		// newBeginHour = maximum end hour of all previous features
+				
 		for (Feature previousFeature : feature.getPreviousFeatures()) {
 			PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 			if (previousPlannedFeature != null) {
 				newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 			}
 		}
+		
+		//FIXME check if works
+		if (prevSolution != null && !prevSolution.getPlannedFeatures().contains(pf)) newBeginHour = Math.max(newBeginHour, replanHour);
+		
 		pf.setBeginHour(newBeginHour);
 		pf.setEndHour(newBeginHour + feature.getDuration());
 	}
