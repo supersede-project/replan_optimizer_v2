@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class AnalyticAlgorithmTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(ValidatePlanningSolutionTest.class);
 		
-	private static final String experimentBaseDirectory = "/home/jmotger/Escritorio/experiments";
+	private static final String experimentBaseDirectory = ".";
 	
     private static final int INDEPENDENT_RUNS = 25 ;
     
@@ -75,6 +76,7 @@ public class AnalyticAlgorithmTest {
     }
 	
 	@Test
+	@Ignore
     public void analyticTest() throws Exception {
 		
 		// Create an instance for parameterized NRP generation

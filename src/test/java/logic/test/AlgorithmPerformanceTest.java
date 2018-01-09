@@ -6,6 +6,7 @@ import logic.SolverNRP;
 import logic.analytics.PerformanceCharts;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
@@ -123,6 +124,7 @@ public class AlgorithmPerformanceTest {
     }
 
     @Test
+    @Ignore
     public void populationSizeTest() {
         for (int k = 0; k < 5; ++k) {
             NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
