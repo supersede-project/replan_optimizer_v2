@@ -103,10 +103,18 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 
 		this.plannedFeatures = new CopyOnWriteArrayList<>();
 		for (PlannedFeature plannedFeature : plannedFeatures) {
+			undoneFeatures.remove(plannedFeature.getFeature());
 			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
 			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
 		}
 
+		//FIXME update data to increase week scheduling
+		int nbFeaturesToDo = undoneFeatures.size();
+		if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
+            initializePlannedFeaturesRandomly(nbFeaturesToDo);
+        else
+            initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
+		
 	    initializeObjectiveValues();
 	}
 

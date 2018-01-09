@@ -178,8 +178,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	@Override
 	public PlanningSolution createSolution() {
-		return new PlanningSolution(this);
-		//return new PlanningSolution(this, Arrays.asList());
+		//return new PlanningSolution(this);
+		if (previousSolution != null) return new PlanningSolution(this, previousSolution.getJobs());
+		else return new PlanningSolution(this);
 	}
 
 	@Override
