@@ -3,12 +3,14 @@ package logic.testing;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import entities.Employee;
 import entities.Feature;
+import entities.PlannedFeature;
 import entities.Skill;
 import entities.WeekSchedule;
 import logic.NextReleaseProblem;
@@ -35,7 +37,8 @@ public class ReplanValidationTest {
     }
 	
 	@Test
-	public void replanAfterLastFeatureHasBegun() {
+	@Ignore
+	public void averageReplanning() {
 		List<Skill> skills = random.skillList(1);
 		List<Employee> employees = random.employeeList(2);
         List<Feature> features = random.featureList(10);
@@ -70,12 +73,53 @@ public class ReplanValidationTest {
         NextReleaseProblem replanProblem = new NextReleaseProblem(solution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);
         System.out.println(replanSolution.toString());
-        for (Employee e : replanSolution.getEmployeesPlanning().keySet()) {
+        /*for (Employee e : replanSolution.getEmployeesPlanning().keySet()) {
         	System.out.println("Employee " + e.getName());
         	for (WeekSchedule w : replanSolution.getEmployeesPlanning().get(e).getAllWeeks()) {
         		System.out.println("From " + w.getBeginHour() + " to " + w.getEndHour() + " we do " + w.getPlannedFeatures().size() + " features");
         	}
-        }
+        }*/
 	}
 
+	@Test
+	public void replanWithFrozenFeature() {
+		List<Skill> skills = random.skillList(1);
+		List<Employee> employees = random.employeeList(2);
+        List<Feature> features = random.featureList(10);
+        
+        employees.get(0).getSkills().add(skills.get(0));
+        employees.get(1).getSkills().add(skills.get(0));
+        
+        features.get(0).getRequiredSkills().add(skills.get(0));
+        features.get(1).getRequiredSkills().add(skills.get(0));
+        features.get(2).getRequiredSkills().add(skills.get(0));
+        features.get(3).getRequiredSkills().add(skills.get(0));
+        features.get(4).getRequiredSkills().add(skills.get(0));
+        features.get(5).getRequiredSkills().add(skills.get(0));
+        features.get(6).getRequiredSkills().add(skills.get(0));
+        features.get(7).getRequiredSkills().add(skills.get(0));
+        features.get(8).getRequiredSkills().add(skills.get(0));
+        features.get(9).getRequiredSkills().add(skills.get(0));
+        
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
+        System.out.println(solution.toString());
+        
+        Employee newE = random.employee();
+        newE.getSkills().add(skills.get(0));
+        employees.add(newE);
+        
+        double replanHour = 20.0;
+        PlannedFeature pf = solution.getPlannedFeature(solution.getPlannedFeatures().size()-1);
+        PlannedFeature pf2 = solution.getPlannedFeature(solution.getPlannedFeatures().size()-3);
+        pf.setFrozen(true);
+        pf2.setFrozen(true);
+        System.out.println("Feature " + pf.getFeature().getName() + " and " + pf2.getFeature().getName() + " are now frozen");
+        
+        NextReleaseProblem replanProblem = new NextReleaseProblem(solution, features, employees, 5, 40.0, replanHour);
+        PlanningSolution replanSolution = solver.executeNRP(replanProblem);
+        System.out.println(replanSolution.toString());
+        
+	}
+	
 }

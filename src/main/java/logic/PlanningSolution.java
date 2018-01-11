@@ -112,7 +112,6 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 			}
 		}
 		
-		//FIXME update data to increase week scheduling
 		int nbFeaturesToDo = undoneFeatures.size();
 		if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
             initializePlannedFeaturesRandomly(nbFeaturesToDo);
