@@ -121,7 +121,7 @@ public class OldSchedule implements Iterable<WeekSchedule> {
     /**
      * Schedules the given PlannedFeature forcing a time skip if necessary.
      * To be used only in postprocessing (and maybe in frozen features if you see it fits).
-     * For regular, proper scheduling use {@link Schedule#scheduleFeature(PlannedFeature)}
+     * For regular, proper scheduling use {@link OldSchedule#scheduleFeature(PlannedFeature)}
      */
     public void forceSchedule(PlannedFeature pf) {
         WeekSchedule week = getCurrentWeek();

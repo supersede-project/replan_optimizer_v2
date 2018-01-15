@@ -109,12 +109,37 @@ public class ReplanValidationTest {
         newE.getSkills().add(skills.get(0));
         employees.add(newE);
         
+        List<Feature> smallFeatures = random.featureList(10);
+        smallFeatures.get(0).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(1).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(2).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(3).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(4).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(5).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(6).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(7).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(8).getRequiredSkills().add(skills.get(0));
+        smallFeatures.get(9).getRequiredSkills().add(skills.get(0));
+        
+        smallFeatures.get(0).setDuration(1.0);
+        smallFeatures.get(1).setDuration(1.0);
+        smallFeatures.get(2).setDuration(1.0);
+        smallFeatures.get(3).setDuration(1.0);
+        smallFeatures.get(4).setDuration(1.0);
+        smallFeatures.get(5).setDuration(1.0);
+        smallFeatures.get(6).setDuration(1.0);
+        smallFeatures.get(7).setDuration(1.0);
+        smallFeatures.get(8).setDuration(1.0);
+        smallFeatures.get(9).setDuration(1.0);
+        
         double replanHour = 20.0;
         PlannedFeature pf = solution.getPlannedFeature(solution.getPlannedFeatures().size()-1);
         PlannedFeature pf2 = solution.getPlannedFeature(solution.getPlannedFeatures().size()-3);
         pf.setFrozen(true);
         pf2.setFrozen(true);
         System.out.println("Feature " + pf.getFeature().getName() + " and " + pf2.getFeature().getName() + " are now frozen");
+        System.out.println("Performing replanning at " + replanHour + "\n");
+        features.addAll(smallFeatures);
         
         NextReleaseProblem replanProblem = new NextReleaseProblem(solution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);

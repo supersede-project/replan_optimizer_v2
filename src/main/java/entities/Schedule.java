@@ -6,6 +6,7 @@ import java.util.*;
  * Represents the schedule of an employee during a certain number of weeks
  * and takes care of assigning features to said employee.
  */
+@Deprecated
 public class Schedule implements Iterable<WeekSchedule> {
     private List<WeekSchedule> weeks;
     private Employee employee;

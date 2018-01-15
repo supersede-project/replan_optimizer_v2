@@ -3,7 +3,7 @@ package logic;
 import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
-import entities.Schedule;
+import entities.NewSchedule;
 import entities.parameters.AlgorithmParameters;
 import logic.analytics.Analytics;
 import logic.analytics.EmployeeAnalytics;
@@ -212,7 +212,7 @@ public class SolverNRP {
 
                     PlannedFeature pf = new PlannedFeature(f, e);
                     utils.computeHours(pf);
-                    Schedule s = solution.getEmployeesPlanning().get(e);
+                    NewSchedule s = solution.getEmployeesPlanning().get(e);
 
                     s.scheduleFeature(pf);
 

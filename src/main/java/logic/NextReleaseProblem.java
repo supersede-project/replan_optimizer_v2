@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 
-// TODO: The Frozen Features functionality needs to be remade to adapt it to the Schedule class
+// TODO: The Frozen Features functionality needs to be remade to adapt it to the NewSchedule class
 /**
  * A class representing a Next Release problem.
  * Objectives:
@@ -210,7 +210,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	@Override
 	public void evaluate(PlanningSolution solution) {
-		Map<Employee, Schedule> planning = new HashMap<Employee, Schedule>();
+		Map<Employee, NewSchedule> planning = new HashMap<Employee, NewSchedule>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		//FIXME check why hours were removed
@@ -219,20 +219,20 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
             computeHours(solution, currentPlannedFeature);
 			Employee employee = currentPlannedFeature.getEmployee();
-			Schedule employeeSchedule = planning.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
+			NewSchedule employeeNewSchedule = planning.getOrDefault(employee, new NewSchedule(employee, nbWeeks, nbHoursByWeek));
 			
-			if (!employeeSchedule.contains(currentPlannedFeature)) {
-                if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
+			if (!employeeNewSchedule.contains(currentPlannedFeature)) {
+                if (!employeeNewSchedule.scheduleFeature(currentPlannedFeature)) {
                     solution.unschedule(currentPlannedFeature);
                 }
 			}
 			
-			planning.put(employee, employeeSchedule);
+			planning.put(employee, employeeNewSchedule);
         }
         
         double endHour = 0.0;
-        for (Schedule schedule : planning.values())
-            for (PlannedFeature pf : schedule.getPlannedFeatures())
+        for (NewSchedule NewSchedule : planning.values())
+            for (PlannedFeature pf : NewSchedule.getPlannedFeatures())
                 endHour = Math.max(endHour, pf.getEndHour());
 
 		solution.setEmployeesPlanning(planning);

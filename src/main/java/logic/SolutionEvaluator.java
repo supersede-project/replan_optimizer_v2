@@ -40,7 +40,7 @@ public class SolutionEvaluator {
     	if (solution.getPlannedFeatures().size() == 0) return 0.0;
     	Map<Employee, Double> hoursPerEmployee = new HashMap<>();
         double totalHours = 0.0;
-        for (Map.Entry<Employee, Schedule> entry : solution.getEmployeesPlanning().entrySet()) {
+        for (Map.Entry<Employee, NewSchedule> entry : solution.getEmployeesPlanning().entrySet()) {
             Employee employee = entry.getKey();
             hoursPerEmployee.put(employee, 0.0);
             for (WeekSchedule week : entry.getValue()) {

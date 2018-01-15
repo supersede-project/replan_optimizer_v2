@@ -2,6 +2,7 @@ package logic.analytics;
 
 import entities.Employee;
 import entities.Feature;
+import entities.NewSchedule;
 import entities.PlannedFeature;
 import entities.Schedule;
 import logic.PlanningSolution;
@@ -33,7 +34,7 @@ public class EmployeeAnalytics {
         endHour = utils.endHour(employee);
         totalAvailability = employee.getWeekAvailability() * solution.getProblem().getNbWeeks();
 
-        Schedule s = solution.getEmployeesPlanning().get(employee);
+        NewSchedule s = solution.getEmployeesPlanning().get(employee);
         doneFeatures = s == null ? new ArrayList<>() :
                 s.getPlannedFeatures().stream().map(PlannedFeature::getFeature).collect(Collectors.toList());;
         doneHours = s == null ? 0.0 : s.getPlannedFeatures().stream()
