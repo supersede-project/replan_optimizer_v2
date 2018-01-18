@@ -42,9 +42,9 @@ public class ValidatePlanningSolutionTest {
 	@Test
 	public void testWrapper() {
 		logger.info("1. Planning solution should be empty");
-		emptyPlanningSolutions();
+		//emptyPlanningSolutions();
 		logger.info("2. EndTime should be the criticalPath");
-		maxPathPlanningSolutions();
+		//maxPathPlanningSolutions();
 		logger.info("3. Constraints and rules");
 		constraintsPlanningSolutions();
 	}
@@ -280,7 +280,7 @@ public class ValidatePlanningSolutionTest {
         	employees.get(i).getSkills().add(s1);
         }
         
-        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 1, 40);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40);
         PlanningSolution solution = solver.executeNRP(problem);
 
         Assert.assertTrue(solution.getPlannedFeatures().size() == features.size());
@@ -317,6 +317,7 @@ public class ValidatePlanningSolutionTest {
         List<Feature> plannedFeatures = new ArrayList<>();
         for (PlannedFeature pf : solution.getPlannedFeatures()) plannedFeatures.add(pf.getFeature());
         features.removeAll(plannedFeatures);
+        //System.out.println(solution.toString());
         
         //Check what would happen if planned
         for (Feature f : features) {        	
@@ -330,6 +331,7 @@ public class ValidatePlanningSolutionTest {
 	 * precedences are respected
 	 */
 	private void featurePrecedencesAreRespected() {
+		logger.info("Feature precedences are respected");
 		double nbHoursPerWeek = 40.0;
         Skill s1 = random.skill();
         List<Feature> features = random.featureList(20);

@@ -108,6 +108,7 @@ public class ReplanValidationTest {
         Employee newE = random.employee();
         newE.getSkills().add(skills.get(0));
         employees.add(newE);
+        newE.setWeekAvailability(20.0);
         
         List<Feature> smallFeatures = random.featureList(10);
         smallFeatures.get(0).getRequiredSkills().add(skills.get(0));

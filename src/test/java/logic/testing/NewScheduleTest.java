@@ -22,18 +22,21 @@ public class NewScheduleTest {
 		Feature f = new Feature("F001", PriorityLevel.URGENT, 35.0, Arrays.asList(), Arrays.asList(s));
 		Feature f2 = new Feature("F002", PriorityLevel.URGENT, 5.0, Arrays.asList(), Arrays.asList(s));
 		Feature f3 = new Feature("F003", PriorityLevel.URGENT, 5.0, Arrays.asList(), Arrays.asList(s));
+		Feature f4 = new Feature("F004", PriorityLevel.URGENT, 35.0, Arrays.asList(), Arrays.asList(s));
 		NewSchedule schedule = new NewSchedule(e, 4, 40.0);
 		
 		PlannedFeature pf = new PlannedFeature(f,e);
 		PlannedFeature pf2 = new PlannedFeature(f2,e);
 		PlannedFeature pf3 = new PlannedFeature(f3,e);
+		PlannedFeature pf4 = new PlannedFeature(f4,e);
 		
 		pf2.setBeginHour(85.0);
-		pf2.setEndHour(90.0);
+		pf.setBeginHour(85.0);
 
 		schedule.scheduleFeature(pf2);
 		schedule.scheduleFeature(pf);
 		schedule.scheduleFeature(pf3);
+		schedule.scheduleFeature(pf4);
 		
 		/*Assert.assertEquals(schedule.getCurrentHour(), 85.0, 0.0);
 		Assert.assertEquals(schedule.getAllWeeks().size(), 3);
