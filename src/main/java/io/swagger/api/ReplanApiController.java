@@ -38,7 +38,7 @@ public class ReplanApiController implements ReplanApi {
             NextReleaseProblem problem =
                     new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
             problem.setPreviousSolution(p.getPreviousSolution());
-
+            problem.setReplanHour(p.getReplanHour());
 
             // Execute
             SolverNRP solver = new SolverNRP();

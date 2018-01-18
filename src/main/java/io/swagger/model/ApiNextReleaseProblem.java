@@ -38,6 +38,8 @@ public class ApiNextReleaseProblem {
     private List<Employee> resources = new ArrayList<>();
 
     private AlgorithmParameters algorithmParameters = null;
+    
+    private double replanHour;
 
 
     /* --- CONSTRUCTORS --- */
@@ -56,10 +58,11 @@ public class ApiNextReleaseProblem {
 
     public ApiNextReleaseProblem(
             Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Employee> resources,
-            ApiPlanningSolution previousSolution)
+            ApiPlanningSolution previousSolution, double replanHour)
     {
         this(nbWeeks, hoursPerWeek, features, resources);
         this.previousSolution = previousSolution;
+        this.replanHour = replanHour;
     }
 
     /**
@@ -122,6 +125,10 @@ public class ApiNextReleaseProblem {
 
     public void setAlgorithmParameters(AlgorithmParameters algorithmParameters) { this.algorithmParameters = algorithmParameters; }
 
+    @ApiModelProperty(value="")
+    public double getReplanHour() { return replanHour; }
+    
+    public void setReplanHour(double replanHour) { this.replanHour = replanHour; }
 
 
     /* ----------------- */
