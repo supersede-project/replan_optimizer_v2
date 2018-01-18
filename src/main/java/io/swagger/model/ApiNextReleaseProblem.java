@@ -1,12 +1,5 @@
 package io.swagger.model;
 
-import com.google.gson.JsonSyntaxException;
-import entities.Employee;
-import entities.Feature;
-import entities.parameters.AlgorithmParameters;
-import io.swagger.api.ReplanGson;
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,6 +8,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.google.gson.JsonSyntaxException;
+
+import entities.Employee;
+import entities.Feature;
+import entities.parameters.AlgorithmParameters;
+import entities.parameters.EvaluationParameters;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.api.ReplanGson;
 
 /**
  * Convenience data class for receiving data from the API call.
@@ -38,11 +40,13 @@ public class ApiNextReleaseProblem {
     private List<Employee> resources = new ArrayList<>();
 
     private AlgorithmParameters algorithmParameters = null;
+    
+    private EvaluationParameters evaluationParameters = null;
 
 
     /* --- CONSTRUCTORS --- */
 
-    public ApiNextReleaseProblem() {
+	public ApiNextReleaseProblem() {
         features = new ArrayList<>();
         resources = new ArrayList<>();
     }
@@ -122,6 +126,13 @@ public class ApiNextReleaseProblem {
 
     public void setAlgorithmParameters(AlgorithmParameters algorithmParameters) { this.algorithmParameters = algorithmParameters; }
 
+    @ApiModelProperty(value="")
+    public EvaluationParameters getEvaluationParameters() {
+		return evaluationParameters;
+	}
+	public void setEvaluationParameters(EvaluationParameters evaluationParameters) {
+		this.evaluationParameters = evaluationParameters;
+	}
 
 
     /* ----------------- */
