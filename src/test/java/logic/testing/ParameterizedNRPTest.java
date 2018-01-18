@@ -66,20 +66,6 @@ public class ParameterizedNRPTest {
 			System.out.println("***BEST SOLUTION FOUND***");
 			System.out.println(solution.toString());
 			
-			ApiPlanningSolution replan = new ApiPlanningSolution(solution);
-			NextReleaseProblem replanProblem = new NextReleaseProblem(nrp.getFeatures(), nrp.getEmployees(), 
-					nbWeeks, nbHoursPerWeek, replan);
-			PlanningSolution replanSolution = solver.executeNRP(replanProblem);
-			System.out.println("***REPLANNING 1***");
-			System.out.println(replanSolution.toString());
-			
-			ApiPlanningSolution replan2 = new ApiPlanningSolution(replanSolution);
-			NextReleaseProblem replanProblem2 = new NextReleaseProblem(nrp.getFeatures(), nrp.getEmployees(), 
-					nbWeeks, nbHoursPerWeek, replan2);
-			PlanningSolution replanSolution2 = solver.executeNRP(replanProblem2);
-			System.out.println("***REPLANNING 2***");
-			System.out.println(replanSolution2.toString());
-			
 		}
 		
 	}

@@ -4,7 +4,6 @@ import entities.Employee;
 import entities.Feature;
 import entities.NewSchedule;
 import entities.PlannedFeature;
-import entities.Schedule;
 import logic.PlanningSolution;
 
 import java.util.ArrayList;

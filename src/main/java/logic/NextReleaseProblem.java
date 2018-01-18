@@ -46,9 +46,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	// PROBLEM
 	private List<Feature> features;
 	private List<Employee> employees;
-	//FIXME duplicated instances, check if needed
-	private ApiPlanningSolution previousSolution;
-	private PlanningSolution prevSolution;
+	private ApiPlanningSolution prevSolution;
 	private double replanHour; 		// The hour of the requested replan
 	private int nbWeeks; 			// The number of weeks of the iteration
 	private double nbHoursByWeek; 	// The number of worked hours by week
@@ -69,17 +67,11 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public void setReplanHour(double replanHour) {
 		this.replanHour = replanHour;
 	}
-	public PlanningSolution getPrevSolution() {
+	public ApiPlanningSolution getPreviousSolution() {
 		return prevSolution;
 	}
-	public void setPreviousSolution(PlanningSolution previousSolution) {
-		this.prevSolution = previousSolution;
-	}
-	public ApiPlanningSolution getPreviousSolution() {
-		return previousSolution;
-	}
 	public void setPreviousSolution(ApiPlanningSolution previousSolution) {
-		this.previousSolution = previousSolution;
+		this.prevSolution = previousSolution;
 	}
 	public List<Feature> getFeatures() {
 		return features;
@@ -150,16 +142,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public void setTag(String name) {
 		setName(name);
 	}
-
-	// Constructor (with previous plan)
-	public NextReleaseProblem(List<Feature> features, List<Employee> employees,
-							  int nbWeeks, double nbHoursPerWeek, ApiPlanningSolution previousSolution) {
-		this(features, employees, nbWeeks, nbHoursPerWeek);
-		this.previousSolution = previousSolution;
-	}
 	
 	// Constructor (for replanning)
-	public NextReleaseProblem(PlanningSolution previousSolution, List<Feature> features, List<Employee> employees,
+	public NextReleaseProblem(ApiPlanningSolution previousSolution, List<Feature> features, List<Employee> employees,
 								int nbWeeks, double nbHoursPerWeek, double replanHour) {
 		this(features, employees, nbWeeks, nbHoursPerWeek);
 		this.prevSolution = previousSolution;
@@ -172,8 +157,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		this(origin.getFeatures(), origin.getEmployees(), origin.getNbWeeks(), origin.getNbHoursByWeek());
 	}
 
-	public NextReleaseProblem(ApiNextReleaseProblem p) {
-		this(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek(), p.getPreviousSolution());
+	public NextReleaseProblem(ApiNextReleaseProblem p, double replanHour) {
+		this(p.getPreviousSolution(), p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek(), replanHour);
 	}
 
 	/* ------------ */
@@ -204,7 +189,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	@Override
 	public PlanningSolution createSolution() {
 		//return new PlanningSolution(this);
-		if (prevSolution != null) return new PlanningSolution(this, prevSolution.getPlannedFeatures());
+		if (prevSolution != null) return new PlanningSolution(this, prevSolution.getJobs());
 		else return new PlanningSolution(this);
 	}
 
@@ -267,7 +252,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		}
 		//if (pf.isFrozen()) System.out.println("Soooo aparently " + pf.getBeginHour() + " to " + pf.getEndHour());
 		//FIXME check if works
-		if (prevSolution != null && !prevSolution.getPlannedFeatures().contains(pf)) newBeginHour = Math.max(newBeginHour, replanHour);
+		if (prevSolution != null && !prevSolution.getJobs().contains(pf)) newBeginHour = Math.max(newBeginHour, replanHour);
 		
 		pf.setBeginHour(newBeginHour);
 		pf.setEndHour(newBeginHour + feature.getDuration());
@@ -283,9 +268,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
 
 			// Ignore precedence constraint if the planned feature is frozen in the previous plan
-			if (	previousSolution != null &&
-					previousSolution.findJobOf(currentFeature.getFeature()) != null &&
-					previousSolution.getJobs().contains(currentFeature))
+			if (	prevSolution != null &&
+					prevSolution.findJobOf(currentFeature.getFeature()) != null &&
+					prevSolution.getJobs().contains(currentFeature))
 			{
 			    continue;
             }
@@ -326,11 +311,11 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			}
 		}
 
-		if (previousSolution != null) {
+		if (prevSolution != null) {
 			Map<Feature, Employee> previousFeatures = new HashMap<>();
 
 			// Frozen jobs constraint
-			for (PlannedFeature pf : previousSolution.getJobs()) {
+			for (PlannedFeature pf : prevSolution.getJobs()) {
 				previousFeatures.put(pf.getFeature(), pf.getEmployee());
 
 				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {

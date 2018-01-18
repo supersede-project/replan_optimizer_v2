@@ -13,6 +13,7 @@ import entities.Feature;
 import entities.PlannedFeature;
 import entities.Skill;
 import entities.WeekSchedule;
+import io.swagger.model.ApiPlanningSolution;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolverNRP;
@@ -69,8 +70,9 @@ public class ReplanValidationTest {
         double replanHour = 30.0;
         
         System.out.println("Adding a new employee and replanning at " + replanHour);
+        ApiPlanningSolution apiPlanningSolution = new ApiPlanningSolution(solution);
         
-        NextReleaseProblem replanProblem = new NextReleaseProblem(solution, features, employees, 5, 40.0, replanHour);
+        NextReleaseProblem replanProblem = new NextReleaseProblem(apiPlanningSolution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);
         System.out.println(replanSolution.toString());
         /*for (Employee e : replanSolution.getEmployeesPlanning().keySet()) {
@@ -142,7 +144,8 @@ public class ReplanValidationTest {
         System.out.println("Performing replanning at " + replanHour + "\n");
         features.addAll(smallFeatures);
         
-        NextReleaseProblem replanProblem = new NextReleaseProblem(solution, features, employees, 5, 40.0, replanHour);
+        ApiPlanningSolution apiPlanningSolution = new ApiPlanningSolution(solution);
+        NextReleaseProblem replanProblem = new NextReleaseProblem(apiPlanningSolution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);
         System.out.println(replanSolution.toString());
         

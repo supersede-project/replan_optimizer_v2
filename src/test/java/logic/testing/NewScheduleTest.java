@@ -8,7 +8,6 @@ import org.junit.Test;
 import entities.Employee;
 import entities.Feature;
 import entities.NewSchedule;
-import entities.Schedule;
 import entities.PlannedFeature;
 import entities.PriorityLevel;
 import entities.Skill;

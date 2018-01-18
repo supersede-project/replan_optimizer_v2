@@ -433,7 +433,7 @@ public class SolverNRPTest {
         if (p == null)
             throw new AssertionError("Dataset file does not exist or contains invalid data.");
 
-        NextReleaseProblem problem = new NextReleaseProblem(p);
+        NextReleaseProblem problem = new NextReleaseProblem(p, 0.0);
         PlanningSolution solution = new SolverNRP().executeNRP(problem);
 
         validator.validateAll(solution);
@@ -448,7 +448,7 @@ public class SolverNRPTest {
         if (p == null)
             throw new AssertionError("Dataset file does not exist or contains invalid data.");
 
-        NextReleaseProblem problem = new NextReleaseProblem(p);
+        NextReleaseProblem problem = new NextReleaseProblem(p, 0.0);
         PlanningSolution solution = new SolverNRP().executeNRP(problem);
 
         validator.validateAll(solution);
@@ -463,7 +463,7 @@ public class SolverNRPTest {
         if (p == null)
             throw new AssertionError("Dataset file does not exist or contains invalid data.");
 
-        NextReleaseProblem problem = new NextReleaseProblem(p);
+        NextReleaseProblem problem = new NextReleaseProblem(p, 0.0);
         PlanningSolution solution = new SolverNRP().executeNRP(problem);
 
         validator.validateAll(solution);
