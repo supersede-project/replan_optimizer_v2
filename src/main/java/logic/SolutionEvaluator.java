@@ -1,6 +1,7 @@
 package logic;
 
 import entities.*;
+import entities.parameters.EvaluationParameters;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,28 +69,13 @@ public class SolutionEvaluator {
         		
         return 1.0 - normalizedSd;
     }
-
-
-    /* --- OLD QUALITY --- */
-    /*public double quality(PlanningSolution solution) {
-        NextReleaseProblem problem = solution.getProblem();
-        double worstEndDate = problem.getNbWeeks() * problem.getNbHoursByWeek();
-
-        double unplannedFeatures = solution.getUndoneFeatures().size();
-        double totalFeatures = problem.getFeatures().size();
-        double penalty = worstEndDate/totalFeatures;
-        //FIXME updated to avoid NaN solution answers
-        double endDateQuality = totalFeatures > 0 ?
-        		Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate) : 0;
-        //FIXME updated to avoid NaN solution answers
-        double priorityQuality = worstScore(problem) > 0 ? 
-        		1.0 - priorityObjective(solution) / worstScore(problem) : 0;
-        double distributionQuality = 1.0 - distributionObjective(solution);
-        //System.out.println(endDateQuality + " " + priorityQuality + " " + distributionQuality);
-        return (endDateQuality*0.3 + priorityQuality*0.4 + distributionQuality*0.3);
-    }*/
     
-    private int COMPLETION_SCALE;
+    public double priorityObjective(PlanningSolution solution) {
+        double score = worstScore(solution.getProblem());
+    	return (score - solution.getPriorityScore()) / worstScore(solution.getProblem());
+    }
+    
+    private double objectivePriorityRange = 0.999;
     
     /* --- NEW QUALITY --- */
     public double newQuality(PlanningSolution solution) {
@@ -100,15 +86,46 @@ public class SolutionEvaluator {
         		
         double distributionQuality = distributionObjective(solution);
         
-        double priorityScore = priorityScore(solution);
+        double priorityQuality = priorityObjective(solution);
                         
-        double qualityScore = (
+/*        double qualityScore = (
         		endDateQuality*0.5 + 
-//        		completionQuality*0.0 + 
+        		completionQuality*0.0 + 
         		distributionQuality*0.5) / 
         		(double) Math.pow(10, COMPLETION_SCALE);
         
-        double quality = priorityScore + qualityScore;
+        double quality = priorityScore + qualityScore;*/
+        
+        EvaluationParameters evaluationParameters = solution.getProblem().getEvaluationParameters();
+        int priorityLevels = evaluationParameters.getPriorityLevels();
+        
+        double quality = 0.0;
+        
+        for (int i = 0; i < priorityLevels; ++i) {
+        	HashMap<Integer, Double> objectives = evaluationParameters.getObjectivesOfPriority(i);
+        	double score = 0.0;
+        	for (Integer objectiveIndex : objectives.keySet()) {
+        		switch(objectiveIndex) {
+        			case EvaluationParameters.completionQuality:
+        				score += completionQuality * objectives.get(objectiveIndex);
+        				break;
+        			case EvaluationParameters.distributionQuality:
+        				score += distributionQuality * objectives.get(objectiveIndex);
+        				break;
+        			case EvaluationParameters.endDateQuality:
+        				score += endDateQuality * objectives.get(objectiveIndex);
+        				break;
+        			case EvaluationParameters.priorityQuality:
+        				score += priorityQuality * objectives.get(objectiveIndex);
+        				break;
+    				default:
+    					break;
+        		}
+        	}
+        	double max = objectivePriorityRange / Math.pow(10, i*3);
+        	quality += score * max;
+        	//quality += score / Math.pow(10, i*3);
+        }
         
         /*System.out.println("For " + solution.getPlannedFeatures().size() + " planned features:");
         System.out.println("End date " + endDateQuality);
@@ -119,23 +136,6 @@ public class SolutionEvaluator {
         return quality;
     	
     }
-
-
-    private double priorityScore(PlanningSolution solution) {
-    	if (solution.getPlannedFeatures().size() == 0) return 0.0;
-    	COMPLETION_SCALE = 0;
-    	double aux = 0.9;
-        double max = 0;
-        int worstScore = (int) worstScore(solution.getProblem());
-        while (worstScore > 0) {
-        	max += aux;
-        	aux /= 10;
-        	worstScore /= 10;
-        	++COMPLETION_SCALE;
-        }
-        double score = worstScore(solution.getProblem());
-        return max * (score - solution.getPriorityScore()) / worstScore(solution.getProblem());
-	}
 
 	/* --- PRIVATE AUX --- */
     private double worstScore(NextReleaseProblem problem) {

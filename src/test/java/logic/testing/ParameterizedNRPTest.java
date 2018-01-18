@@ -35,11 +35,11 @@ public class ParameterizedNRPTest {
 	
 	@Before
 	public void before() {
-		nbFeatures = 50;
+		nbFeatures = 30;
 		nbSkills = 3;
 		nbEmployees = 4;
 		
-		nbWeeks = 2;
+		nbWeeks = 5;
 		nbHoursPerWeek = 40.0;
 		
 		dependencyRate = 0.30;
@@ -67,7 +67,7 @@ public class ParameterizedNRPTest {
 			System.out.println(solution.toString());
 			
 			ApiPlanningSolution replan = new ApiPlanningSolution(solution);
-			NextReleaseProblem replanProblem = new NextReleaseProblem(nrp.getFeatures(), nrp.getEmployees(), 
+			/*NextReleaseProblem replanProblem = new NextReleaseProblem(nrp.getFeatures(), nrp.getEmployees(), 
 					nbWeeks, nbHoursPerWeek, replan);
 			PlanningSolution replanSolution = solver.executeNRP(replanProblem);
 			System.out.println("***REPLANNING 1***");
@@ -78,7 +78,7 @@ public class ParameterizedNRPTest {
 					nbWeeks, nbHoursPerWeek, replan2);
 			PlanningSolution replanSolution2 = solver.executeNRP(replanProblem2);
 			System.out.println("***REPLANNING 2***");
-			System.out.println(replanSolution2.toString());
+			System.out.println(replanSolution2.toString());*/
 			
 		}
 		
