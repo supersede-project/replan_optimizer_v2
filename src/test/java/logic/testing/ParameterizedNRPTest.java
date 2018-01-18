@@ -35,11 +35,11 @@ public class ParameterizedNRPTest {
 	
 	@Before
 	public void before() {
-		nbFeatures = 50;
+		nbFeatures = 30;
 		nbSkills = 3;
 		nbEmployees = 4;
 		
-		nbWeeks = 2;
+		nbWeeks = 5;
 		nbHoursPerWeek = 40.0;
 		
 		dependencyRate = 0.30;

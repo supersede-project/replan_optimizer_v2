@@ -5,6 +5,7 @@ package logic;
 
 import entities.*;
 import entities.parameters.AlgorithmParameters;
+import entities.parameters.EvaluationParameters;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
 
@@ -51,6 +52,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private int nbWeeks; 			// The number of weeks of the iteration
 	private double nbHoursByWeek; 	// The number of worked hours by week
 	private AlgorithmParameters algorithmParameters;
+	private EvaluationParameters evaluationParameters;
 
 	// SOLUTION
 	private NumberOfViolatedConstraints<PlanningSolution> numberOfViolatedConstraints;
@@ -105,6 +107,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public AlgorithmParameters getAlgorithmParameters() { return algorithmParameters; }
 	public void setAlgorithmParameters(AlgorithmParameters algorithmParameters) { this.algorithmParameters = algorithmParameters; }
 
+	public EvaluationParameters getEvaluationParameters() { return evaluationParameters; }
+	public void setEvaluationParameters(EvaluationParameters evaluationParameters) { this.evaluationParameters = evaluationParameters;}
+	
 	// Constructor (empty)
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
@@ -115,6 +120,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		overallConstraintViolation = new OverallConstraintViolation<>();
 		solutionQuality = new SolutionQuality();
 		algorithmParameters = new AlgorithmParameters(SolverNRP.AlgorithmType.NSGAII);
+		evaluationParameters = new EvaluationParameters();
 	}
 
 	// Constructor (normal)

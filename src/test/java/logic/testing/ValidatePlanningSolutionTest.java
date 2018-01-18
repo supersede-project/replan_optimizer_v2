@@ -33,7 +33,7 @@ public class ValidatePlanningSolutionTest {
 	@BeforeClass
     public static void setUpBeforeClass() {
 		logger.info("Set up...");
-        solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+        solver = new SolverNRP();
         random = new RandomThings();
         validator = new Validator();
         logger.info("NRP solver initialized with " + solver.getAlgorithmType() + " algorithm type");
