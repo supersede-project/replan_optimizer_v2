@@ -1,0 +1,420 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SUPERSEDE RePlan Optimizer v2</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>SUPERSEDE RePlan Optimizer v2</h1>
+    <div class="app-desc">RePlan Optimizer (v2) - API documentation</div>
+    <div class="app-desc">More information: <a href="https://github.com/supersede-project/replan_optimizer_v2">https://github.com/supersede-project/replan_optimizer_v2</a></div>
+    <div class="app-desc">Contact Info: <a href="dameller@essi.upc.edu">dameller@essi.upc.edu</a></div>
+    <div class="app-desc">Version: 2.0.1</div>
+    <div class="app-desc">BasePath:/replan_optimizer_v2-0.0.1</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Replanapicontroller">Replanapicontroller</a></h4>
+  <ul>
+  <li><a href="#replanUsingPOST"><code><span class="http-method">post</span> /replan</code></a></li>
+  </ul>
+
+  <h1><a name="Replanapicontroller">Replanapicontroller</a></h1>
+  <div class="method"><a name="replanUsingPOST"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /replan</code></pre></div>
+    <div class="method-summary">Generates a Planning Solution for a given Next Release Problem (<span class="nickname">replanUsingPOST</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#NextReleaseProblem">NextReleaseProblem</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; The Next Release Problem to replan </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#PlanningSolution">PlanningSolution</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "planned_features" : [ {
+    "feature" : {
+      "duration" : 5.63737665663332876420099637471139430999755859375,
+      "code" : 5,
+      "depends_on" : [ "" ],
+      "release" : {
+        "release_id" : 9
+      },
+      "required_skills" : [ {
+        "name" : "aeiou",
+        "description" : "aeiou",
+        "id" : 7
+      } ],
+      "name" : "aeiou",
+      "description" : "aeiou",
+      "id" : 1,
+      "deadline" : "2000-01-23T04:56:07.000+00:00",
+      "priority" : 2
+    },
+    "resource" : {
+      "skills" : [ "" ],
+      "name" : "aeiou",
+      "description" : "aeiou",
+      "id" : 3,
+      "availability" : 2.027123023002321833274663731572218239307403564453125
+    },
+    "frozen" : true,
+    "end_hour" : 6.02745618307040320615897144307382404804229736328125,
+    "begin_hour" : 0.80082819046101150206595775671303272247314453125
+  } ]
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Created
+        <a href="#PlanningSolution">PlanningSolution</a>
+    <h4 class="field-label">400</h4>
+    Bad Request
+        <a href="#"></a>
+    <h4 class="field-label">422</h4>
+    Unprocessable Entity
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#AlgorithmParameters"><code>AlgorithmParameters</code> - </a></li>
+    <li><a href="#EvaluationParameters"><code>EvaluationParameters</code> - </a></li>
+    <li><a href="#Feature"><code>Feature</code> - </a></li>
+    <li><a href="#Feature_release"><code>Feature_release</code> - </a></li>
+    <li><a href="#NextReleaseProblem"><code>NextReleaseProblem</code> - </a></li>
+    <li><a href="#Objective"><code>Objective</code> - </a></li>
+    <li><a href="#PlannedFeature"><code>PlannedFeature</code> - </a></li>
+    <li><a href="#PlanningSolution"><code>PlanningSolution</code> - </a></li>
+    <li><a href="#Resource"><code>Resource</code> - </a></li>
+    <li><a href="#Skill"><code>Skill</code> - </a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="AlgorithmParameters"><code>AlgorithmParameters</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">algorithm_type (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">NSGA-II</div><div class="param-enum">MOCell</div><div class="param-enum">SPEA2</div><div class="param-enum">PESA2</div><div class="param-enum">SMSEMOA</div>
+<div class="param">crossover_probability (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">rate_of_not_random_solutions (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">number_of_iterations (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">population_size (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="EvaluationParameters"><code>EvaluationParameters</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">priority_quality (optional)</div><div class="param-desc"><span class="param-type"><a href="#Objective">Objective</a></span>  </div>
+<div class="param">end_date_quality (optional)</div><div class="param-desc"><span class="param-type"><a href="#Objective">Objective</a></span>  </div>
+<div class="param">distribution_quality (optional)</div><div class="param-desc"><span class="param-type"><a href="#Objective">Objective</a></span>  </div>
+<div class="param">completion_quality (optional)</div><div class="param-desc"><span class="param-type"><a href="#Objective">Objective</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Feature"><code>Feature</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">code (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">duration </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">deadline </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">priority </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">required_skills </div><div class="param-desc"><span class="param-type"><a href="#Skill">array[Skill]</a></span>  </div>
+<div class="param">depends_on </div><div class="param-desc"><span class="param-type"><a href="#Feature">array[Feature]</a></span>  </div>
+<div class="param">release (optional)</div><div class="param-desc"><span class="param-type"><a href="#Feature_release">Feature_release</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Feature_release"><code>Feature_release</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">release_id (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="NextReleaseProblem"><code>NextReleaseProblem</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">nbWeeks </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">hoursPerWeek </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">starts_at </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">deadline </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">resources </div><div class="param-desc"><span class="param-type"><a href="#Resource">array[Resource]</a></span>  </div>
+<div class="param">features </div><div class="param-desc"><span class="param-type"><a href="#Feature">array[Feature]</a></span>  </div>
+<div class="param">algorithm_parameters (optional)</div><div class="param-desc"><span class="param-type"><a href="#AlgorithmParameters">AlgorithmParameters</a></span>  </div>
+<div class="param">evaluation_parameters (optional)</div><div class="param-desc"><span class="param-type"><a href="#EvaluationParameters">EvaluationParameters</a></span>  </div>
+<div class="param">replan_hour (optional)</div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">previous_solution (optional)</div><div class="param-desc"><span class="param-type"><a href="#PlanningSolution">PlanningSolution</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Objective"><code>Objective</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">priority </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">value </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="PlannedFeature"><code>PlannedFeature</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">frozen </div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">begin_hour </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">end_hour </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">feature </div><div class="param-desc"><span class="param-type"><a href="#Feature">Feature</a></span>  </div>
+<div class="param">resource </div><div class="param-desc"><span class="param-type"><a href="#Resource">Resource</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="PlanningSolution"><code>PlanningSolution</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">planned_features </div><div class="param-desc"><span class="param-type"><a href="#PlannedFeature">array[PlannedFeature]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Resource"><code>Resource</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">availability </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  </div>
+<div class="param">skills </div><div class="param-desc"><span class="param-type"><a href="#Skill">array[Skill]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Skill"><code>Skill</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">description (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
