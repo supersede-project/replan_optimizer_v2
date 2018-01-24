@@ -40,20 +40,22 @@ public class SolutionEvaluator {
     public double distributionObjective(PlanningSolution solution) {
     	if (solution.getPlannedFeatures().size() == 0) return 0.0;
     	Map<Employee, Double> hoursPerEmployee = new HashMap<>();
-        double totalHours = 0.0;
-        //FIXME iterate over PF and update HoursPerEmployee
+        double avg = 0.0;
+        //FIXME change absolute number of hours to relative
         for (Map.Entry<Employee, NewSchedule> entry : solution.getEmployeesPlanning().entrySet()) {
             Employee employee = entry.getKey();
             double aux = 0.0;
             for (PlannedFeature pf : entry.getValue().getPlannedFeatures()) {
             	aux += pf.getFeature().getDuration();
             }
-            hoursPerEmployee.put(employee, aux);
+            double ratio = aux / (employee.getWeekAvailability() * solution.getProblem().getNbWeeks());
+            hoursPerEmployee.put(employee, ratio);
+            avg += ratio;
         }
         
         double totalEmployees = solution.getProblem().getEmployees().size();
         //Calculates the standard deviation of the hours
-        double expectedAvg = totalHours/totalEmployees;
+        double expectedAvg = avg/totalEmployees;
         double sum = 0.0;
         for (Double nbHours : hoursPerEmployee.values()) {
             sum += Math.pow(Math.abs(nbHours - expectedAvg), 2);
@@ -61,7 +63,7 @@ public class SolutionEvaluator {
         double standardDeviation = Math.sqrt(sum/totalEmployees);
         
         //Normalizes the standard deviation
-        double max = ((totalEmployees - 1.0) * Math.pow(expectedAvg, 2) + Math.pow(totalHours - expectedAvg, 2))/totalEmployees;
+        double max = ((totalEmployees - 1.0) * Math.pow(expectedAvg, 2) + Math.pow(avg - expectedAvg, 2))/totalEmployees;
         double normalizedSd = max > 0 ? standardDeviation / max : 0;
         		
         return 1.0 - normalizedSd;
