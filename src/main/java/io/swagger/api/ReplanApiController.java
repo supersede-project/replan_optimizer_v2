@@ -1,4 +1,4 @@
-package io.swagger.api;
+ package io.swagger.api;
 
 
 import com.google.gson.Gson;

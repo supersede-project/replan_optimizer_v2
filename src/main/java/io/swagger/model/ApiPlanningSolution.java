@@ -18,9 +18,6 @@ public class ApiPlanningSolution {
 
     private List<PlannedFeature> jobs;
 
-
-
-
     /* --- CONSTRUCTORS --- */
     public ApiPlanningSolution() {
         jobs = new ArrayList<>();

@@ -111,7 +111,15 @@ public class Validator {
     public void validateNoOverlappedJobs(PlanningSolution solution) {
         Map<Employee, NewSchedule> schedule = solution.getEmployeesPlanning();
         for (Map.Entry<Employee, NewSchedule> entry : schedule.entrySet()) {
-            for (WeekSchedule week : entry.getValue()) {
+        	List<PlannedFeature> features = entry.getValue().getPlannedFeatures();
+        	for (int i = 0; i < features.size(); ++i) {
+        		for (int j = i+1; j < features.size(); ++i) {
+        			Assert.assertTrue(String.format(OVERLAPPING_FAIL_MESSAGE, features.get(i), features.get(j)),
+        					features.get(i).getEndHour() < features.get(j).getBeginHour() ||
+        					features.get(i).getBeginHour() > features.get(j).getEndHour());
+        		}
+        	}
+            /*for (WeekSchedule week : entry.getValue()) {
                 double endHour = 0.0;
                 List<PlannedFeature> employeeJobs = week.getPlannedFeatures();
                 PlannedFeature previous = employeeJobs.isEmpty() ? null : employeeJobs.get(0);
@@ -126,7 +134,7 @@ public class Validator {
                     endHour = pf.getEndHour();
                     previous = pf;
                 }
-            }
+            }*/
         }
     }
 }

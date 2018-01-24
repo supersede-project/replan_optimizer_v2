@@ -83,17 +83,16 @@ public class Utils {
 
     public double startHour(Employee e) {
         NewSchedule s = solution.getEmployeesPlanning().get(e);
-        if (s != null && s.size() >= 1)
-            return s.getWeek(0).getBeginHour();
+        if (s != null)
+            return s.getBeginHour();
 
         return -1.0;
     }
 
     public double endHour(Employee e) {
         NewSchedule s = solution.getEmployeesPlanning().get(e);
-        if (s != null && s.size() >= 1)
-            return s.getWeek(s.size() - 1).getEndHour();
-
+        if (s != null)
+        	return s.getEndHour();
         return -1.0;
     }
 

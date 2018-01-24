@@ -41,17 +41,14 @@ public class SolutionEvaluator {
     	if (solution.getPlannedFeatures().size() == 0) return 0.0;
     	Map<Employee, Double> hoursPerEmployee = new HashMap<>();
         double totalHours = 0.0;
+        //FIXME iterate over PF and update HoursPerEmployee
         for (Map.Entry<Employee, NewSchedule> entry : solution.getEmployeesPlanning().entrySet()) {
             Employee employee = entry.getKey();
-            hoursPerEmployee.put(employee, 0.0);
-            for (WeekSchedule week : entry.getValue()) {
-                double aux = hoursPerEmployee.get(employee);
-                for (PlannedFeature pf : week.getPlannedFeatures()) {
-                    totalHours += pf.getFeature().getDuration();
-                    aux += pf.getFeature().getDuration();
-                }
-                hoursPerEmployee.put(employee, aux);
+            double aux = 0.0;
+            for (PlannedFeature pf : entry.getValue().getPlannedFeatures()) {
+            	aux += pf.getFeature().getDuration();
             }
+            hoursPerEmployee.put(employee, aux);
         }
         
         double totalEmployees = solution.getProblem().getEmployees().size();

@@ -11,6 +11,9 @@ public class EvaluationParameters {
 	public static final int distributionQuality = 2;
 	public static final int priorityQuality = 3;
 	
+	/**
+	 * An ordered list with the set of objective weights grouped by priority (key) 
+	 */
 	private List<HashMap<Integer, Double>> objectivesList;
 	
 	public EvaluationParameters() {
