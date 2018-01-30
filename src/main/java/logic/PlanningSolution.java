@@ -29,7 +29,7 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 	
     private CopyOnWriteArrayList<PlannedFeature> plannedFeatures; 	            // Included features
 	private CopyOnWriteArrayList<Feature> undoneFeatures; 						// Not included features
-    private Map<Employee, Schedule> employeesPlanning; 			// The employees' schedule
+    private Map<Employee, NewSchedule> employeesPlanning; 			// The employees' Schedule
 	private double endDate;     								// The end hour of the solution
     private Analytics analytics = null;
     
@@ -62,10 +62,10 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 		return undoneFeatures;
 	}
 
-	public Map<Employee, Schedule> getEmployeesPlanning() {
+	public Map<Employee, NewSchedule> getEmployeesPlanning() {
 		return employeesPlanning;
 	}
-	public void setEmployeesPlanning(Map<Employee, Schedule> employeesPlanning) {
+	public void setEmployeesPlanning(Map<Employee, NewSchedule> employeesPlanning) {
 		this.employeesPlanning = employeesPlanning;
 	}
 
@@ -96,19 +96,22 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
     // constructor (with previous plan)
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
-
-	    //numberOfViolatedConstraints = 0;
 	    undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
 
 		this.plannedFeatures = new CopyOnWriteArrayList<>();
+		
+		//Update features according to replan
 		for (PlannedFeature plannedFeature : plannedFeatures) {
-			undoneFeatures.remove(plannedFeature.getFeature());
-			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
-			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			//undoneFeatures.remove(plannedFeature.getFeature());
+			//if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
+			//else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			if (plannedFeature.isFrozen() || plannedFeature.getBeginHour() < problem.getReplanHour()) {
+				undoneFeatures.remove(plannedFeature.getFeature());
+				this.plannedFeatures.add(plannedFeature);
+			}
 		}
-
-		//FIXME update data to increase week scheduling
+		
 		int nbFeaturesToDo = undoneFeatures.size();
 		if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
             initializePlannedFeaturesRandomly(nbFeaturesToDo);
@@ -133,8 +136,8 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 	    
 	    employeesPlanning = new HashMap<>();
 	    for (Employee e : origin.employeesPlanning.keySet()) {
-	    	Schedule old = origin.employeesPlanning.get(e);
-			employeesPlanning.put(e, new Schedule(old));
+	    	NewSchedule old = origin.employeesPlanning.get(e);
+			employeesPlanning.put(e, new NewSchedule(old));
 		}
 	    
 	    for (int i = 0 ; i < origin.getNumberOfObjectives() ; i++)
@@ -263,13 +266,13 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 		}
 	}
 
-	// Schedule a planned feature to a position in the planning
+	// schedule a planned feature to a position in the planning
 	public void schedule(int position, Feature feature, Employee e) {
 		undoneFeatures.remove(feature);
 		plannedFeatures.add(position, new PlannedFeature(feature, e));
 	}
 		
-	// Schedule a feature in the planning
+	// schedule a feature in the planning
 	public void scheduleAtTheEnd(Feature feature, Employee e) {
 		if (isAlreadyPlanned(feature)) plannedFeatures.remove(findPlannedFeature(feature));
 		else undoneFeatures.remove(feature);
@@ -277,12 +280,12 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
         plannedFeatures.add(newPlannedFeature);
 	}
 	
-	// Schedule a random undone feature to a random place in the planning
+	// schedule a random undone feature to a random place in the planning
 	public void scheduleRandomFeature() {
 		scheduleRandomFeature(randomGenerator.nextInt(0, plannedFeatures.size()));
 	}
 	
-	// Schedule a random feature to insertionPosition of the planning list
+	// schedule a random feature to insertionPosition of the planning list
 	public void scheduleRandomFeature(int insertionPosition) {
 		if (undoneFeatures.size() <= 0)
 			return;
@@ -292,12 +295,12 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 		schedule(insertionPosition, newFeature, newEmployee);
 	}
 	
-	// Schedule the planned feature at a random position in the planning
+	// schedule the planned feature at a random position in the planning
 	public void scheduleRandomly(PlannedFeature plannedFeature) {
 		schedule(randomGenerator.nextInt(0, plannedFeatures.size()), plannedFeature.getFeature(), plannedFeature.getEmployee());
 	}
 
-	// Unschedule a feature : remove it from the planned features and add it to the undone ones
+	// schedule a feature : remove it from the planned features and add it to the undone ones
 	public void unschedule(PlannedFeature plannedFeature) {
 		if (isAlreadyPlanned(plannedFeature.getFeature())) {
 			undoneFeatures.add(plannedFeature.getFeature());
@@ -367,9 +370,9 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 		sb.append("\n");
 		if (employeesPlanning != null) {
 			for (Employee e : employeesPlanning.keySet()) {
-				sb.append("Employee " + e.getName() + " schedule (availability: " + e.getWeekAvailability() + "h)\n");
+				sb.append("Employee " + e.getName() + " Schedule (availability: " + e.getWeekAvailability() + "h)\n");
 				for (PlannedFeature pf : employeesPlanning.get(e).getPlannedFeatures()) {
-					sb.append("\tFeature " + pf.getFeature() + " from " + pf.getBeginHour() + " to " + pf.getEndHour() + "\n");
+					sb.append("\tFeature " + pf.getFeature() + " from " + pf.getBeginHour() + " to " + pf.getEndHour() + " (" + pf.getFeature().getDuration() + "h)\n");
 				}
 			}
 		}

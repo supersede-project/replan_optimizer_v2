@@ -2,9 +2,13 @@ package io.swagger.api;
 
 import com.google.gson.*;
 import entities.PriorityLevel;
+import entities.parameters.EvaluationParameters;
 import logic.SolverNRP;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Initializes a Gson instance customized for JSON (de)serialization of all the necessary Replan entities.
@@ -55,11 +59,29 @@ public class ReplanGson {
             }
         };
 
-
+        JsonDeserializer<EvaluationParameters> evaluationDeserializer = new JsonDeserializer<EvaluationParameters>() {
+			@Override
+			public EvaluationParameters deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+					throws JsonParseException {
+				List<HashMap<Integer, Double>> objectives = new ArrayList<>();
+				JsonArray array = json.getAsJsonArray();
+				for (int i = 0; i < array.size(); ++i) {
+					HashMap<Integer, Double> values = new HashMap<>();
+					JsonObject obj = array.get(i).getAsJsonObject();
+					for (String key : obj.keySet()) {
+						values.put(Integer.valueOf(key), obj.get(key).getAsDouble());
+					}
+					objectives.add(values);
+				}
+				return new EvaluationParameters(objectives);
+			}
+		};
+		
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(PriorityLevel.class, prioritySerializer);
         gsonBuilder.registerTypeAdapter(PriorityLevel.class, priorityDeserializer);
         gsonBuilder.registerTypeAdapter(SolverNRP.AlgorithmType.class, algorithmTypeDeserializer);
+        gsonBuilder.registerTypeAdapter(EvaluationParameters.class, evaluationDeserializer);
 
         gson = gsonBuilder.create();
     }

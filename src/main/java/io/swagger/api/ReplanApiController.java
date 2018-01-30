@@ -1,4 +1,4 @@
-package io.swagger.api;
+ package io.swagger.api;
 
 
 import com.google.gson.Gson;
@@ -38,12 +38,15 @@ public class ReplanApiController implements ReplanApi {
             NextReleaseProblem problem =
                     new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
             problem.setPreviousSolution(p.getPreviousSolution());
+            problem.setReplanHour(p.getReplanHour());
 
 
             // Execute
             SolverNRP solver = new SolverNRP();
 
             problem.setAlgorithmParameters(problem.getAlgorithmParameters());
+            problem.setEvaluationParameters(problem.getEvaluationParameters());
+            
             PlanningSolution solution = solver.executeNRP(problem);
 
             ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);

@@ -82,18 +82,17 @@ public class Utils {
     }
 
     public double startHour(Employee e) {
-        Schedule s = solution.getEmployeesPlanning().get(e);
-        if (s != null && s.size() >= 1)
-            return s.getWeek(0).getBeginHour();
+        NewSchedule s = solution.getEmployeesPlanning().get(e);
+        if (s != null)
+            return s.getBeginHour();
 
         return -1.0;
     }
 
     public double endHour(Employee e) {
-        Schedule s = solution.getEmployeesPlanning().get(e);
-        if (s != null && s.size() >= 1)
-            return s.getWeek(s.size() - 1).getEndHour();
-
+        NewSchedule s = solution.getEmployeesPlanning().get(e);
+        if (s != null)
+        	return s.getEndHour();
         return -1.0;
     }
 
@@ -108,13 +107,13 @@ public class Utils {
         }
 
         double employeeEndHour = e.getWeekAvailability() * problem.getNbWeeks();
-        Schedule s = solution.getEmployeesPlanning().get(e);
+        NewSchedule s = solution.getEmployeesPlanning().get(e);
         return employeeEndHour - endHour >= f.getDuration();
     }
 
     // Tells if the employee had enough time to do this feature, according to solution's schedule.
     public boolean hadEnoughTime(Employee e, Feature f) {
-        Schedule s = solution.getEmployeesPlanning().get(e);
+        NewSchedule s = solution.getEmployeesPlanning().get(e);
         return s != null && s.getTotalHoursLeft() >= f.getDuration();
     }
 }

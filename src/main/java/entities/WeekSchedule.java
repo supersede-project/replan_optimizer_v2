@@ -72,8 +72,17 @@ public class WeekSchedule {
 	/**
 	 * @param plannedFeature the plannedFeature to set
 	 */
-	public void addPlannedFeature(PlannedFeature plannedFeature) {
+	public void addPlannedFeature(PlannedFeature plannedFeature, double beginH, double endH) {
 		this.plannedFeatures.add(plannedFeature);
+		remainingHours -= (endH - beginH);
+		
+		if (beginHour == 0.0 && endHour == 0.0) {
+			this.beginHour = beginH;
+			this.endHour = endH;
+		} else {
+			if (this.beginHour > beginH) this.beginHour = beginH;
+			if (this.endHour < endH) this.endHour = endH;
+		}
 	}
 
 	
@@ -84,11 +93,10 @@ public class WeekSchedule {
 	 * @param beginHour the begin hour of the employee in the week
 	 * @param remainingHours the number of hours the employee can do in the week
 	 */
-	public WeekSchedule(double beginHour, double remainingHours) {
-		this.beginHour = beginHour;
+	public WeekSchedule(double remainingHours) {
 		this.remainingHours = remainingHours;
-		endHour = beginHour;
 		this.plannedFeatures = new ArrayList<>();
+		beginHour = endHour = 0.0;
 	}
 	
 	/**

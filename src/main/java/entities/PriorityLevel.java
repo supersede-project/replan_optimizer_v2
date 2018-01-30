@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
  *
  */
 public enum PriorityLevel {
-	URGENT(1, 160),
+	VERY_HIGH(1, 160),
 	HIGH(2, 80),
 	MEDIUM(3, 40),
 	LOW(4, 20),
@@ -71,7 +71,7 @@ public enum PriorityLevel {
 	public static PriorityLevel getPriorityByLevel(int level) {
 		switch (level) {
 			case 1:
-				return PriorityLevel.URGENT;
+				return PriorityLevel.VERY_HIGH;
 			case 2:
 				return PriorityLevel.HIGH;
 			case 3:

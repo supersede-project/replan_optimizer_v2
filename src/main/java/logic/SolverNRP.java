@@ -3,8 +3,9 @@ package logic;
 import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
-import entities.Schedule;
+import entities.NewSchedule;
 import entities.parameters.AlgorithmParameters;
+import entities.parameters.EvaluationParameters;
 import logic.analytics.Analytics;
 import logic.analytics.EmployeeAnalytics;
 import logic.analytics.Utils;
@@ -75,6 +76,7 @@ public class SolverNRP {
 
     private Algorithm<List<PlanningSolution>> algorithm;
     private AlgorithmType algorithmType;
+    private EvaluationParameters evaluationParameters;
 
 
     /**
@@ -83,6 +85,7 @@ public class SolverNRP {
     public SolverNRP() {
         algorithm = null;
         algorithmType = AlgorithmType.NSGAII;
+        evaluationParameters = new EvaluationParameters();
     }
 
     /**
@@ -157,6 +160,9 @@ public class SolverNRP {
             problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
         else
             algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
+        
+        if (problem.getEvaluationParameters() == null)
+        	problem.setEvaluationParameters(new EvaluationParameters());
 
         //PlanningSolution solution = this.generatePlanningSolution(problem);
         PlanningSolution solution = this.generatePlanningSolutionWithMeasures(problem);
@@ -212,7 +218,7 @@ public class SolverNRP {
 
                     PlannedFeature pf = new PlannedFeature(f, e);
                     utils.computeHours(pf);
-                    Schedule s = solution.getEmployeesPlanning().get(e);
+                    NewSchedule s = solution.getEmployeesPlanning().get(e);
 
                     s.scheduleFeature(pf);
 

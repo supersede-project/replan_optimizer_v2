@@ -33,7 +33,7 @@ public class ValidatePlanningSolutionTest {
 	@BeforeClass
     public static void setUpBeforeClass() {
 		logger.info("Set up...");
-        solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+        solver = new SolverNRP();
         random = new RandomThings();
         validator = new Validator();
         logger.info("NRP solver initialized with " + solver.getAlgorithmType() + " algorithm type");
@@ -280,7 +280,7 @@ public class ValidatePlanningSolutionTest {
         	employees.get(i).getSkills().add(s1);
         }
         
-        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 1, 40);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40);
         PlanningSolution solution = solver.executeNRP(problem);
 
         Assert.assertTrue(solution.getPlannedFeatures().size() == features.size());
@@ -317,6 +317,7 @@ public class ValidatePlanningSolutionTest {
         List<Feature> plannedFeatures = new ArrayList<>();
         for (PlannedFeature pf : solution.getPlannedFeatures()) plannedFeatures.add(pf.getFeature());
         features.removeAll(plannedFeatures);
+        //System.out.println(solution.toString());
         
         //Check what would happen if planned
         for (Feature f : features) {        	
@@ -330,6 +331,7 @@ public class ValidatePlanningSolutionTest {
 	 * precedences are respected
 	 */
 	private void featurePrecedencesAreRespected() {
+		logger.info("Feature precedences are respected");
 		double nbHoursPerWeek = 40.0;
         Skill s1 = random.skill();
         List<Feature> features = random.featureList(20);
@@ -425,15 +427,16 @@ public class ValidatePlanningSolutionTest {
     }
 
     public void endHourMinusBeginHourEqualsDuration() {
-        List<Skill> skills = random.skillList(6);
+        	
+    	List<Skill> skills = random.skillList(6);
         List<Feature> features = random.featureList(14);
         List<Employee> employees = random.employeeList(4);
-
+    	
         random.mix(features, skills, employees);
-
+    
         NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
         PlanningSolution solution = solver.executeNRP(problem);
-
+        
         validator.validateAll(solution);
 
         for (PlannedFeature pf : solution.getPlannedFeatures())

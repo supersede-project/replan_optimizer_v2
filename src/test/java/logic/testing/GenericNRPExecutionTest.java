@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import entities.Employee;
 import entities.Feature;
+import entities.NewSchedule;
+import entities.PlannedFeature;
 import entities.Skill;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
