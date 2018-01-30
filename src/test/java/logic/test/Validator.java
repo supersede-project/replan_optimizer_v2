@@ -113,10 +113,10 @@ public class Validator {
         for (Map.Entry<Employee, NewSchedule> entry : schedule.entrySet()) {
         	List<PlannedFeature> features = entry.getValue().getPlannedFeatures();
         	for (int i = 0; i < features.size(); ++i) {
-        		for (int j = i+1; j < features.size(); ++i) {
-        			Assert.assertTrue(String.format(OVERLAPPING_FAIL_MESSAGE, features.get(i), features.get(j)),
-        					features.get(i).getEndHour() < features.get(j).getBeginHour() ||
-        					features.get(i).getBeginHour() > features.get(j).getEndHour());
+        		for (int j = i+1; j < features.size(); ++j) {
+        			if (!features.get(i).equals(features.get(j))) Assert.assertTrue(String.format(OVERLAPPING_FAIL_MESSAGE, features.get(i), features.get(j)),
+        					features.get(i).getEndHour() <= features.get(j).getBeginHour() ||
+        					features.get(i).getBeginHour() >= features.get(j).getEndHour());
         		}
         	}
             /*for (WeekSchedule week : entry.getValue()) {

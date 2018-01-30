@@ -203,9 +203,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public void evaluate(PlanningSolution solution) {
 		Map<Employee, NewSchedule> planning = new HashMap<Employee, NewSchedule>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
-
-		//FIXME check why hours were removed
-		//solution.resetHours();
 		
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
             computeHours(solution, currentPlannedFeature);
@@ -248,7 +245,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private void computeHours(PlanningSolution solution, PlannedFeature pf) {
 		double newBeginHour = pf.getBeginHour();
 		Feature feature = pf.getFeature();
-		// newBeginHour = maximum end hour of all previous features
 				
 		for (Feature previousFeature : feature.getPreviousFeatures()) {
 			PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
@@ -256,12 +252,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 			}
 		}
-		//if (pf.isFrozen()) System.out.println("Soooo aparently " + pf.getBeginHour() + " to " + pf.getEndHour());
-		//FIXME check if works
 		if (prevSolution != null && !prevSolution.getJobs().contains(pf)) newBeginHour = Math.max(newBeginHour, replanHour);
 		
 		pf.setBeginHour(newBeginHour);
-		pf.setEndHour(newBeginHour + feature.getDuration());
 	}
 
 	@Override

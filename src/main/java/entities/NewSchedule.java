@@ -113,18 +113,20 @@ public class NewSchedule {
     	Collection<WeekSlot> weeks = slot.getWeekSlots().values();
     	Iterator iterator = weeks.iterator();
     	WeekSlot week = (WeekSlot) iterator.next();
-    	while (iterator.hasNext() && week.getBeginHour() < pf.getBeginHour() && week.getEndHour() < pf.getBeginHour()) {
+    	while (iterator.hasNext() && week.getBeginHour() < pf.getBeginHour() && week.getEndHour() <= pf.getBeginHour()) {
     		week = (WeekSlot) iterator.next();
     	}
     	
     	while (featureHoursLeft > 0.0) {
     		double doneHours = Math.min(featureHoursLeft, week.getDuration());
+    		doneHours = Math.min(doneHours, week.getEndHour() - currentHour);
     		featureHoursLeft -= doneHours;
     		totalHoursLeft -= doneHours;
     		currentHour += doneHours;
-    		if (featureHoursLeft > 0.0 && currentHour % globalHoursPerWeek != 0)
+    		if (featureHoursLeft > 0.0 && currentHour % globalHoursPerWeek != 0) {
     			currentHour += (globalHoursPerWeek - currentHour % globalHoursPerWeek);
-    		if (iterator.hasNext()) week = (WeekSlot) iterator.next();
+    		}
+    		if (featureHoursLeft > 0.0 && iterator.hasNext()) week = (WeekSlot) iterator.next();
     	}
     	
     	pf.setEndHour(currentHour);
@@ -149,7 +151,7 @@ public class NewSchedule {
 		HashMap<Integer, WeekSlot> afterWeekSlots = new HashMap<>();
 		
 		List<Integer> removedWeeks = new ArrayList<>();
-						
+								
 		for (Integer week : slot.getWeekSlots().keySet()) {
 			WeekSlot weekSlot = slot.getWeekSlots().get(week);
 			
@@ -165,7 +167,7 @@ public class NewSchedule {
 					&& weekSlot.getEndHour() <= pf.getEndHour()) {
 				double duration = weekSlot.getDuration() - (weekSlot.getEndHour() - pf.getBeginHour());
 				if (duration > 0.0)
-					beforeWeekSlots.put(week, new WeekSlot(pf.getBeginHour(), weekSlot.getBeginHour(), duration));
+					beforeWeekSlots.put(week, new WeekSlot(weekSlot.getBeginHour(), pf.getBeginHour(), duration));
 			} 
 			
 			else if (weekSlot.getBeginHour() >= pf.getBeginHour()
@@ -179,11 +181,10 @@ public class NewSchedule {
 					&& weekSlot.getEndHour() > pf.getEndHour()) {
 				double duration = Math.max(0, weekSlot.getDuration() - pf.getFeature().getDuration());
 				if (duration > 0.0) {
-					beforeWeekSlots.put(week, new WeekSlot(weekSlot.getBeginHour(), pf.getBeginHour(), duration));
-					afterWeekSlots.put(week, new WeekSlot(pf.getEndHour(), weekSlot.getEndHour(), duration));
+					beforeWeekSlots.put(week, new WeekSlot(weekSlot.getBeginHour(), pf.getBeginHour(), Math.min(duration, pf.getBeginHour() - weekSlot.getBeginHour())));
+					afterWeekSlots.put(week, new WeekSlot(pf.getEndHour(), weekSlot.getEndHour(), Math.min(duration, weekSlot.getEndHour() - pf.getEndHour())));
 				}
 			} 
-			
 			else	removedWeeks.add(week);
 			//else throw new Exception("Error in Scheduling algorithm - review slot redistribution");
 			

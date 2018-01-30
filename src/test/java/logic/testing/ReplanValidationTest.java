@@ -137,7 +137,7 @@ public class ReplanValidationTest {
         smallFeatures.get(8).setDuration(1.0);
         smallFeatures.get(9).setDuration(1.0);
         
-        double replanHour = 20.0;
+        double replanHour = 30.0;
         PlannedFeature pf = solution.getPlannedFeature(solution.getPlannedFeatures().size()-1);
         PlannedFeature pf2 = solution.getPlannedFeature(solution.getPlannedFeatures().size()-3);
         pf.setFrozen(true);

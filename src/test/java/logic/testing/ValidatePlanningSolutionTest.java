@@ -42,9 +42,9 @@ public class ValidatePlanningSolutionTest {
 	@Test
 	public void testWrapper() {
 		logger.info("1. Planning solution should be empty");
-		//emptyPlanningSolutions();
+		emptyPlanningSolutions();
 		logger.info("2. EndTime should be the criticalPath");
-		//maxPathPlanningSolutions();
+		maxPathPlanningSolutions();
 		logger.info("3. Constraints and rules");
 		constraintsPlanningSolutions();
 	}
@@ -427,15 +427,16 @@ public class ValidatePlanningSolutionTest {
     }
 
     public void endHourMinusBeginHourEqualsDuration() {
-        List<Skill> skills = random.skillList(6);
+        	
+    	List<Skill> skills = random.skillList(6);
         List<Feature> features = random.featureList(14);
         List<Employee> employees = random.employeeList(4);
-
+    	
         random.mix(features, skills, employees);
-
+    
         NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
         PlanningSolution solution = solver.executeNRP(problem);
-
+        
         validator.validateAll(solution);
 
         for (PlannedFeature pf : solution.getPlannedFeatures())

@@ -2,6 +2,7 @@ package logic;
 
 import entities.*;
 import entities.parameters.EvaluationParameters;
+import io.swagger.model.ApiPlanningSolution;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,26 +75,38 @@ public class SolutionEvaluator {
     	return (score - solution.getPriorityScore()) / worstScore(solution.getProblem());
     }
     
+    public double similarityObjective(PlanningSolution solution) {
+    	ApiPlanningSolution previousSolution = solution.getProblem().getPreviousSolution();
+    	if (previousSolution == null) return 1.0;
+    	else  {
+    		double score = 0.0;
+    		for (int i = 0; i < solution.getPlannedFeatures().size(); ++i) {
+    			PlannedFeature pf = solution.getPlannedFeature(i);
+    			Employee e = pf.getEmployee();
+    			Feature f = pf.getFeature();
+    			//Checks if feature is done by the same employee and computes a normalized score according
+    			//to schedule variation
+    			PlannedFeature ppf = previousSolution.findJobOf(f);
+    			if (ppf != null && e.equals(ppf.getEmployee())) {
+    				double maxDiff = Math.max(ppf.getBeginHour(), solution.getEndDate() - ppf.getBeginHour());
+    				double realDiff = Math.abs(ppf.getBeginHour() - pf.getBeginHour());
+    				score += 1.0 - realDiff / maxDiff;
+    			}
+    		}
+    		return score / solution.getPlannedFeatures().size();
+    	}
+    }
+    
     private double objectivePriorityRange = 0.999;
     
     /* --- NEW QUALITY --- */
     public double newQuality(PlanningSolution solution) {
         
         double endDateQuality = endDateObjective(solution);
-                
         double completionQuality = completionObjective(solution);
-        		
         double distributionQuality = distributionObjective(solution);
-        
         double priorityQuality = priorityObjective(solution);
-                        
-/*        double qualityScore = (
-        		endDateQuality*0.5 + 
-        		completionQuality*0.0 + 
-        		distributionQuality*0.5) / 
-        		(double) Math.pow(10, COMPLETION_SCALE);
-        
-        double quality = priorityScore + qualityScore;*/
+        double similarityQuality = similarityObjective(solution);
         
         EvaluationParameters evaluationParameters = solution.getProblem().getEvaluationParameters();
         int priorityLevels = evaluationParameters.getPriorityLevels();
@@ -117,6 +130,8 @@ public class SolutionEvaluator {
         			case EvaluationParameters.priorityQuality:
         				score += priorityQuality * objectives.get(objectiveIndex);
         				break;
+        			case EvaluationParameters.similarityQuality:
+        				score += similarityQuality * objectives.get(objectiveIndex);
     				default:
     					break;
         		}

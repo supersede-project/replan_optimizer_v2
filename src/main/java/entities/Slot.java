@@ -27,14 +27,13 @@ public class Slot {
 		if (pf.getBeginHour() >= getEndHour()) return false;
 		double leftTime = 0.0;
 		for (WeekSlot ws : weekSlots.values()) {
-			if (ws.getBeginHour() <= pf.getBeginHour() && ws.getEndHour() >= pf.getBeginHour()) {
+			if (ws.getBeginHour() <= pf.getBeginHour() && ws.getDuration() > pf.getFeature().getDuration()) {
 				leftTime += Math.min(ws.getDuration(), ws.getEndHour() - pf.getBeginHour());
 			}
 			else if (pf.getBeginHour() < ws.getBeginHour()) {
 				leftTime += ws.getDuration();
 			}
 		}
-		//System.out.println(leftTime+ " leftDuration " + beginHour + " to " + endHour + " starting at " + pf.getBeginHour());
 		return leftTime >= pf.getFeature().getDuration();
 	}
 	public double getTotalDuration() {

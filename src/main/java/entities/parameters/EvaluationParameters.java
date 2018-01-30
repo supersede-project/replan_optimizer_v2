@@ -10,6 +10,7 @@ public class EvaluationParameters {
 	public static final int completionQuality = 1;
 	public static final int distributionQuality = 2;
 	public static final int priorityQuality = 3;
+	public static final int similarityQuality = 4;
 	
 	/**
 	 * An ordered list with the set of objective weights grouped by priority (key) 
@@ -31,6 +32,7 @@ public class EvaluationParameters {
 		lowPriority.put(endDateQuality, 0.4);
 		lowPriority.put(distributionQuality, 0.4);
 		lowPriority.put(completionQuality, 0.2);
+		lowPriority.put(similarityQuality, 0.0);
 		objectivesList.add(lowPriority);
 	}
 
