@@ -29,9 +29,9 @@ public class EvaluationParameters {
 
 	private void configureDefaultLowPriorityObjectives() {
 		HashMap<Integer, Double> lowPriority = new HashMap<>();
-		lowPriority.put(endDateQuality, 0.4);
-		lowPriority.put(distributionQuality, 0.4);
-		lowPriority.put(completionQuality, 0.2);
+		lowPriority.put(endDateQuality, 0.1);
+		lowPriority.put(distributionQuality, 0.8);
+		lowPriority.put(completionQuality, 0.1);
 		lowPriority.put(similarityQuality, 0.0);
 		objectivesList.add(lowPriority);
 	}

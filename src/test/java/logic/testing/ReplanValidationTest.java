@@ -142,8 +142,12 @@ public class ReplanValidationTest {
         PlannedFeature pf2 = solution.getPlannedFeature(solution.getPlannedFeatures().size()-3);
         pf.setFrozen(true);
         pf2.setFrozen(true);
-        System.out.println("Feature " + pf.getFeature().getName() + " and " + pf2.getFeature().getName() + " are now frozen");
-        System.out.println("Performing replanning at " + replanHour + "\n");
+        System.out.println("*******************************");
+        System.out.println("Performing replanning:");
+        System.out.println("1) Feature " + pf.getFeature().getName() + " and " + pf2.getFeature().getName() + " are now frozen");
+        System.out.println("2) Replan performed at " + replanHour);
+        System.out.println("3) Added " + smallFeatures.size() + " features of duration " + smallFeatures.get(0).getDuration());
+        System.out.println("*******************************");
         features.addAll(smallFeatures);
         
         ApiPlanningSolution apiPlanningSolution = new ApiPlanningSolution(solution);

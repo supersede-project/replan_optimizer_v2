@@ -47,6 +47,7 @@ private static final Logger logger = LoggerFactory.getLogger(ValidatePlanningSol
      */
 	@Test
     public void averageUseCaseTest() {
+		double time = System.currentTimeMillis();
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(20);
         List<Employee> employees = random.employeeList(4);
@@ -138,7 +139,7 @@ private static final Logger logger = LoggerFactory.getLogger(ValidatePlanningSol
 
         NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
         System.out.println(problem.toString());
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 1; ++i) {
             PlanningSolution solution = solver.executeNRP(problem);
             System.out.println(solution.toString());
             validator.validateAll(solution);
@@ -146,8 +147,19 @@ private static final Logger logger = LoggerFactory.getLogger(ValidatePlanningSol
             Analytics analytics = new Analytics(solution);
 
             solutionToDataFile(solution);
+    		double endtime = System.currentTimeMillis();
+    		System.out.println("Execution time: " + (endtime - time));
         }
     }
+	
+	public void test(NextReleaseProblem nrp) {
+		double time = System.currentTimeMillis();
+		PlanningSolution solution = solver.executeNRP(nrp);
+        System.out.println(solution.toString());
+        validator.validateAll(solution);
+		double endtime = System.currentTimeMillis();
+		System.out.println("Execution time: " + (endtime - time));
+	}
 	
 	private void solutionToDataFile(PlanningSolution solution) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
@@ -161,7 +173,7 @@ private static final Logger logger = LoggerFactory.getLogger(ValidatePlanningSol
         f.getParentFile().mkdirs();
 
         try {
-            Files.write(f.toPath(), solution.toR().getBytes());
+            Files.write(f.toPath(), solution.toString().getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }

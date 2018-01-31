@@ -54,17 +54,18 @@ public class SolutionEvaluator {
             avg += ratio;
         }
         
-        double totalEmployees = solution.getProblem().getEmployees().size();
+        double totalEmployees = solution.getEmployeesPlanning().entrySet().size();
+        
         //Calculates the standard deviation of the hours
-        double expectedAvg = avg/totalEmployees;
+        double expectedAvg = avg/totalEmployees;        
         double sum = 0.0;
         for (Double nbHours : hoursPerEmployee.values()) {
-            sum += Math.pow(Math.abs(nbHours - expectedAvg), 2);
+            sum += Math.pow(nbHours - expectedAvg, 2);
         }
         double standardDeviation = Math.sqrt(sum/totalEmployees);
         
         //Normalizes the standard deviation
-        double max = ((totalEmployees - 1.0) * Math.pow(expectedAvg, 2) + Math.pow(avg - expectedAvg, 2))/totalEmployees;
+        double max = Math.sqrt(((totalEmployees - 1.0) * Math.pow(expectedAvg, 2) + Math.pow(avg - expectedAvg, 2))/totalEmployees);
         double normalizedSd = max > 0 ? standardDeviation / max : 0;
         		
         return 1.0 - normalizedSd;
@@ -87,11 +88,16 @@ public class SolutionEvaluator {
     			//Checks if feature is done by the same employee and computes a normalized score according
     			//to schedule variation
     			PlannedFeature ppf = previousSolution.findJobOf(f);
-    			if (ppf != null && e.equals(ppf.getEmployee())) {
-    				double maxDiff = Math.max(ppf.getBeginHour(), solution.getEndDate() - ppf.getBeginHour());
-    				double realDiff = Math.abs(ppf.getBeginHour() - pf.getBeginHour());
-    				score += 1.0 - realDiff / maxDiff;
-    			}
+    			if (ppf != null) {
+    				if (e.equals(ppf.getEmployee())) {
+    					//Same resource
+    				
+	    				double maxDiff = Math.max(ppf.getBeginHour(), solution.getEndDate() - ppf.getBeginHour());
+	    				double realDiff = Math.abs(ppf.getBeginHour() - pf.getBeginHour());
+	    				score += 1.0 - realDiff / maxDiff;
+    				}
+    			} else score += 1.0;
+    			
     		}
     		return score / solution.getPlannedFeatures().size();
     	}
@@ -144,8 +150,10 @@ public class SolutionEvaluator {
         /*System.out.println("For " + solution.getPlannedFeatures().size() + " planned features:");
         System.out.println("End date " + endDateQuality);
         System.out.println("Completion " + completionQuality);
-        System.out.println("Distirbution " + distributionQuality);
-        System.out.println("Priority " + priorityScore);*/
+        System.out.println("Distribution " + distributionQuality);
+        System.out.println("Priority" + priorityQuality);
+        System.out.println("Similarity " + similarityQuality);
+        System.out.println("TOTAL " + quality);*/
 
         return quality;
     	
