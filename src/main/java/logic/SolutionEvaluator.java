@@ -2,6 +2,7 @@ package logic;
 
 import entities.*;
 import entities.parameters.EvaluationParameters;
+import entities.parameters.Objective;
 import io.swagger.model.ApiPlanningSolution;
 
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class SolutionEvaluator {
     }
     
     public double similarityObjective(PlanningSolution solution) {
-    	ApiPlanningSolution previousSolution = solution.getProblem().getPreviousSolution();
+    	PlanningSolution previousSolution = solution.getProblem().getPreviousSolution();
     	if (previousSolution == null) return 1.0;
     	else  {
     		double score = 0.0;
@@ -87,7 +88,7 @@ public class SolutionEvaluator {
     			Feature f = pf.getFeature();
     			//Checks if feature is done by the same employee and computes a normalized score according
     			//to schedule variation
-    			PlannedFeature ppf = previousSolution.findJobOf(f);
+    			PlannedFeature ppf = previousSolution.findPlannedFeature(f);
     			if (ppf != null) {
     				if (e.equals(ppf.getEmployee())) {
     					//Same resource
@@ -107,47 +108,18 @@ public class SolutionEvaluator {
     
     /* --- NEW QUALITY --- */
     public double newQuality(PlanningSolution solution) {
-        
+    	
+    	EvaluationParameters evPar = solution.getProblem().getEvaluationParameters();
+                
         double endDateQuality = endDateObjective(solution);
         double completionQuality = completionObjective(solution);
         double distributionQuality = distributionObjective(solution);
         double priorityQuality = priorityObjective(solution);
         double similarityQuality = similarityObjective(solution);
         
-        EvaluationParameters evaluationParameters = solution.getProblem().getEvaluationParameters();
-        int priorityLevels = evaluationParameters.getPriorityLevels();
+        double quality = evPar.evaluate(endDateQuality, completionQuality, distributionQuality, priorityQuality, similarityQuality);
         
-        double quality = 0.0;
-        
-        for (int i = 0; i < priorityLevels; ++i) {
-        	HashMap<Integer, Double> objectives = evaluationParameters.getObjectivesOfPriority(i);
-        	double score = 0.0;
-        	for (Integer objectiveIndex : objectives.keySet()) {
-        		switch(objectiveIndex) {
-        			case EvaluationParameters.completionQuality:
-        				score += completionQuality * objectives.get(objectiveIndex);
-        				break;
-        			case EvaluationParameters.distributionQuality:
-        				score += distributionQuality * objectives.get(objectiveIndex);
-        				break;
-        			case EvaluationParameters.endDateQuality:
-        				score += endDateQuality * objectives.get(objectiveIndex);
-        				break;
-        			case EvaluationParameters.priorityQuality:
-        				score += priorityQuality * objectives.get(objectiveIndex);
-        				break;
-        			case EvaluationParameters.similarityQuality:
-        				score += similarityQuality * objectives.get(objectiveIndex);
-    				default:
-    					break;
-        		}
-        	}
-        	double max = objectivePriorityRange / Math.pow(10, i*3);
-        	quality += score * max;
-        	//quality += score / Math.pow(10, i*3);
-        }
-        
-        /*System.out.println("For " + solution.getPlannedFeatures().size() + " planned features:");
+       /* System.out.println("For " + solution.getPlannedFeatures().size() + " planned features:");
         System.out.println("End date " + endDateQuality);
         System.out.println("Completion " + completionQuality);
         System.out.println("Distribution " + distributionQuality);

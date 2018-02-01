@@ -70,9 +70,9 @@ public class ReplanValidationTest {
         double replanHour = 30.0;
         
         System.out.println("Adding a new employee and replanning at " + replanHour);
-        ApiPlanningSolution apiPlanningSolution = new ApiPlanningSolution(solution);
+        PlanningSolution planningSolution = new PlanningSolution(solution);
         
-        NextReleaseProblem replanProblem = new NextReleaseProblem(apiPlanningSolution, features, employees, 5, 40.0, replanHour);
+        NextReleaseProblem replanProblem = new NextReleaseProblem(planningSolution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);
         System.out.println(replanSolution.toString());
         /*for (Employee e : replanSolution.getEmployeesPlanning().keySet()) {
@@ -85,7 +85,7 @@ public class ReplanValidationTest {
 
 	@Test
 	public void replanWithFrozenFeature() {
-		List<Skill> skills = random.skillList(1);
+		List<Skill> skills = random.skillList(2);
 		List<Employee> employees = random.employeeList(2);
         List<Feature> features = random.featureList(10);
         
@@ -147,11 +147,11 @@ public class ReplanValidationTest {
         System.out.println("1) Feature " + pf.getFeature().getName() + " and " + pf2.getFeature().getName() + " are now frozen");
         System.out.println("2) Replan performed at " + replanHour);
         System.out.println("3) Added " + smallFeatures.size() + " features of duration " + smallFeatures.get(0).getDuration());
-        System.out.println("*******************************");
+        System.out.println("*******************************\n");
         features.addAll(smallFeatures);
         
-        ApiPlanningSolution apiPlanningSolution = new ApiPlanningSolution(solution);
-        NextReleaseProblem replanProblem = new NextReleaseProblem(apiPlanningSolution, features, employees, 5, 40.0, replanHour);
+        PlanningSolution planningSolution = new PlanningSolution(solution);
+        NextReleaseProblem replanProblem = new NextReleaseProblem(planningSolution, features, employees, 5, 40.0, replanHour);
         PlanningSolution replanSolution = solver.executeNRP(replanProblem);
         System.out.println(replanSolution.toString());
         

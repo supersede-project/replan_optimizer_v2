@@ -186,7 +186,7 @@ public class SolverNRPTest {
         }
 
         problem = new NextReleaseProblem(features, employees, 5, 40.0);
-        problem.setPreviousSolution(new ApiPlanningSolution(s1Prime));
+        problem.setPreviousSolution(new PlanningSolution(s1Prime));
         PlanningSolution s2 = solver.executeNRP(problem);
 
         validator.validateFrozen(s1, s2);
@@ -228,7 +228,7 @@ public class SolverNRPTest {
         random.freeze(s1);
 
         problem = new NextReleaseProblem(features, employees, 5, 40.0);
-        problem.setPreviousSolution(new ApiPlanningSolution(s1));
+        problem.setPreviousSolution(new PlanningSolution(s1));
         PlanningSolution s2 = solver.executeNRP(problem);
 
         validator.validateAll(s1, s2);
@@ -426,7 +426,7 @@ public class SolverNRPTest {
             );
     }
 
-    @Test
+    /*@Test
     public void ATOSRelease7() {
         ApiNextReleaseProblem p = ApiNextReleaseProblem.fromFile("ATOS - Release 7.txt");
 
@@ -469,6 +469,6 @@ public class SolverNRPTest {
         validator.validateAll(solution);
 
         solutionToDataFile(solution);
-    }
+    }*/
 
 }

@@ -197,7 +197,7 @@ public class SolverNRP {
 
             // Skip any frozen feature left unplanned because it would likely generate an invalid solution
             if (problem.getPreviousSolution() != null) {
-                PlannedFeature pf = problem.getPreviousSolution().findJobOf(f);
+                PlannedFeature pf = problem.getPreviousSolution().findPlannedFeature(f);
                 if (pf != null && pf.isFrozen())
                     continue;
             }

@@ -28,6 +28,7 @@ public class ReplanApiController implements ReplanApi {
 
         // Deserialize
         String content = requestContentAsString(request);
+        System.out.println(content);
         if (content == null)
             return new ResponseEntity<String>("", HttpStatus.BAD_REQUEST);
 
@@ -39,18 +40,14 @@ public class ReplanApiController implements ReplanApi {
                     new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
             problem.setPreviousSolution(p.getPreviousSolution());
             problem.setReplanHour(p.getReplanHour());
-
+            problem.setAlgorithmParameters(problem.getAlgorithmParameters());
+            problem.setEvaluationParameters(problem.getEvaluationParameters());
 
             // Execute
             SolverNRP solver = new SolverNRP();
-
-            problem.setAlgorithmParameters(problem.getAlgorithmParameters());
-            problem.setEvaluationParameters(problem.getEvaluationParameters());
-            
             PlanningSolution solution = solver.executeNRP(problem);
 
             ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);
-
             return new ResponseEntity<String>(gson.toJson(apiSolution), HttpStatus.OK);
         }
         catch (JsonSyntaxException e) {

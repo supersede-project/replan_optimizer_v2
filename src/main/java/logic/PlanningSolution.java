@@ -2,6 +2,7 @@
 package logic;
 
 import entities.*;
+import io.swagger.model.ApiPlanningSolution;
 import logic.analytics.Analytics;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
@@ -146,8 +147,7 @@ public class PlanningSolution extends AbstractGenericSolution<Integer, NextRelea
 	    endDate = origin.getEndDate();
 	    undoneFeatures = new CopyOnWriteArrayList<>(origin.getUndoneFeatures());
 	}
-
-
+	
 	// Exchange the two features in positions pos1 and pos2
 	public void exchange(int pos1, int pos2) {
 		if (pos1 >= 0 && pos2 >= 0 && pos1 < plannedFeatures.size() && pos2 < plannedFeatures.size() && pos1 != pos2) {

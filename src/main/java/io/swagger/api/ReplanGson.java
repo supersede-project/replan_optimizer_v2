@@ -3,6 +3,7 @@ package io.swagger.api;
 import com.google.gson.*;
 import entities.PriorityLevel;
 import entities.parameters.EvaluationParameters;
+import entities.parameters.Objective;
 import logic.SolverNRP;
 
 import java.lang.reflect.Type;
@@ -63,17 +64,24 @@ public class ReplanGson {
 			@Override
 			public EvaluationParameters deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 					throws JsonParseException {
-				List<HashMap<Integer, Double>> objectives = new ArrayList<>();
-				JsonArray array = json.getAsJsonArray();
-				for (int i = 0; i < array.size(); ++i) {
-					HashMap<Integer, Double> values = new HashMap<>();
-					JsonObject obj = array.get(i).getAsJsonObject();
-					for (String key : obj.keySet()) {
-						values.put(Integer.valueOf(key), obj.get(key).getAsDouble());
-					}
-					objectives.add(values);
-				}
-				return new EvaluationParameters(objectives);
+				Objective end_date_quality, distribution_quality, completion_quality, similarity_quality, priority_quality;
+				end_date_quality = distribution_quality = completion_quality = similarity_quality = priority_quality = new Objective(0, 0.);
+				if (json.getAsJsonObject().has("end_date_quality")) 
+					end_date_quality = new Objective (json.getAsJsonObject().get("end_date_quality").getAsJsonObject().get("priority").getAsInt(),
+							json.getAsJsonObject().get("end_date_quality").getAsJsonObject().get("value").getAsDouble());
+				if (json.getAsJsonObject().has("distribution_quality")) 
+					distribution_quality = new Objective (json.getAsJsonObject().get("distribution_quality").getAsJsonObject().get("priority").getAsInt(),
+							json.getAsJsonObject().get("distribution_quality").getAsJsonObject().get("value").getAsDouble());
+				if (json.getAsJsonObject().has("completion_quality")) 
+					completion_quality = new Objective (json.getAsJsonObject().get("completion_quality").getAsJsonObject().get("priority").getAsInt(),
+							json.getAsJsonObject().get("completion_quality").getAsJsonObject().get("value").getAsDouble());
+				if (json.getAsJsonObject().has("similarity_quality")) 
+					similarity_quality = new Objective (json.getAsJsonObject().get("similarity_quality").getAsJsonObject().get("priority").getAsInt(),
+							json.getAsJsonObject().get("similarity_quality").getAsJsonObject().get("value").getAsDouble());
+				if (json.getAsJsonObject().has("priority_quality")) 
+					priority_quality = new Objective (json.getAsJsonObject().get("priority_quality").getAsJsonObject().get("priority").getAsInt(),
+							json.getAsJsonObject().get("priority_quality").getAsJsonObject().get("value").getAsDouble());
+				return new EvaluationParameters(end_date_quality, distribution_quality, completion_quality, similarity_quality, priority_quality);
 			}
 		};
 		

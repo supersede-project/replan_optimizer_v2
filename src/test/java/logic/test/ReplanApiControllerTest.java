@@ -46,7 +46,7 @@ public class ReplanApiControllerTest {
         ApiPlanningSolution solution = gson.fromJson(response, ApiPlanningSolution.class);
     }
 
-    @Test
+   // @Test
     public void randomProblemWithCustomAlgorithmParameters() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(5);

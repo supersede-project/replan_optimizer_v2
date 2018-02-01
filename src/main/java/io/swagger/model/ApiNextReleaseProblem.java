@@ -17,6 +17,7 @@ import entities.parameters.AlgorithmParameters;
 import entities.parameters.EvaluationParameters;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.api.ReplanGson;
+import logic.PlanningSolution;
 
 /**
  * Convenience data class for receiving data from the API call.
@@ -29,7 +30,7 @@ public class ApiNextReleaseProblem {
 
     private static final String DATASET_PATH = "src/test/datasets";
 
-    private ApiPlanningSolution previousSolution = null;
+    private PlanningSolution previousSolution = null;
 
     private int nbWeeks;
 
@@ -58,11 +59,13 @@ public class ApiNextReleaseProblem {
         this.hoursPerWeek = hoursPerWeek;
         this.features = features;
         this.resources = resources;
+        this.algorithmParameters = new AlgorithmParameters();
+        this.evaluationParameters = new EvaluationParameters();
     }
 
     public ApiNextReleaseProblem(
             Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Employee> resources,
-            ApiPlanningSolution previousSolution, double replanHour)
+            PlanningSolution previousSolution, double replanHour)
     {
         this(nbWeeks, hoursPerWeek, features, resources);
         this.previousSolution = previousSolution;
@@ -96,10 +99,10 @@ public class ApiNextReleaseProblem {
 
 
     @ApiModelProperty(value = "")
-    public ApiPlanningSolution getPreviousSolution() {
+    public PlanningSolution getPreviousSolution() {
         return previousSolution;
     }
-    public void setPreviousSolution(ApiPlanningSolution plan) {
+    public void setPreviousSolution(PlanningSolution plan) {
         previousSolution = plan;
     }
 
